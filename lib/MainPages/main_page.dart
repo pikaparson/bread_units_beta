@@ -28,16 +28,6 @@ class _MainPageClassState extends State<MainPageClass> {
     );
   }
 
-  Row _mainPageBU() {
-    double bu = 0.0;
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text('$bu ХЕ', style: TextStyle(fontSize: 34),)
-      ],
-    );
-  }
-
   Padding _mainPageFloatingActionButton() {
     return Padding(
       padding: const EdgeInsets.only(bottom: 40.0),
@@ -121,21 +111,68 @@ class _MainPageClassState extends State<MainPageClass> {
     );
   }
 
-  Column _mainPageBody() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
+  Widget _mainPageBody() {
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Expanded(
+            child: _mainPageBU(),
+            flex: 2,
+          ),
+          Expanded(
+              child: _mainPageBreakfast(),
+              flex: 1
+          ),
+          Expanded(
+            child: _mainPageCards(),
+            flex: 6,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Row _mainPageBU() {
+    double bu = 0.0;
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Expanded(
-          child: _mainPageBU(),
-          flex: 1,
-        ),
-        Expanded(
-          child: _mainPageCards(),
-          flex: 6,
-        ),
+        Text('$bu ХЕ', style: TextStyle(fontSize: 34),)
       ],
     );
   }
+
+  Flexible _mainPageBreakfast() {
+    return Flexible(
+        child: Container(
+          color: Colors.blue[100],
+          padding: EdgeInsets.only(left: 30, right: 25),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('Завтрак', style: TextStyle(fontSize: 20),),
+              Row(
+                children: [
+                  IconButton(
+                      onPressed: () {},
+                      icon: Icon(Icons.question_mark)
+                  ),
+                  IconButton(
+                      onPressed: () {},
+                      icon: Icon(Icons.add)
+                  )
+                ],
+              )
+            ],
+          ),
+        )
+    );
+  }
+
+
+
+
 
   ListView _mainPageCards() {
     return ListView.builder(
