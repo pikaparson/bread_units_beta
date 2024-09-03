@@ -102,6 +102,11 @@ class _AboutAppClassState extends State<AboutAppClass> {
               Navigator.popAndPushNamed(context, 'help');
             },
           ),
+          ListTile(
+            leading: Icon(Icons.favorite, color: Colors.blueAccent[100]),
+            title: Text('О разработчиках', style: TextStyle(color: Colors.blueAccent[100]),),
+            onTap: null,
+          ),
         ],
       ),
     );

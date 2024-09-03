@@ -118,7 +118,12 @@ class _HelpClassState extends State<HelpClass> {
             },
           ),
           ListTile(
-            leading: Icon(Icons.heart_broken, color: Colors.blueAccent[100]),
+            leading: Icon(Icons.question_mark, color: Colors.blueAccent[100]),
+            title: Text('Справка', style: TextStyle(color: Colors.blueAccent[100]),),
+            onTap: null,
+          ),
+          ListTile(
+            leading: Icon(Icons.favorite, color: Colors.blueAccent[100]),
             title: Text('О разработчиках'),
             onTap: () {
               Navigator.popAndPushNamed(context, 'about_app');

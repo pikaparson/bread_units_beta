@@ -70,6 +70,11 @@ class _MainPageClassState extends State<MainPageClass> {
               )
           ),
           ListTile(
+            leading: Icon(Icons.edit_note_outlined, color: Colors.blueAccent[100]),
+            title: Text('Запись приема пищи', style: TextStyle(color: Colors.blueAccent[100]),),
+            onTap: null,
+          ),
+          ListTile(
             leading: Icon(Icons.local_dining, color: Colors.blueAccent[100]),
             title: Text('База блюд'),
             onTap: () {
@@ -105,7 +110,7 @@ class _MainPageClassState extends State<MainPageClass> {
             },
           ),
           ListTile(
-            leading: Icon(Icons.heart_broken, color: Colors.blueAccent[100]),
+            leading: Icon(Icons.favorite, color: Colors.blueAccent[100]),
             title: Text('О разработчиках'),
             onTap: () {
               Navigator.popAndPushNamed(context, 'about_app');

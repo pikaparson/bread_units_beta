@@ -118,6 +118,11 @@ class _ProductBaseClassState extends State<ProductBaseClass> {
             },
           ),
           ListTile(
+            leading: Icon(Icons.apple, color: Colors.blueAccent[100]),
+            title: Text('База продуктов', style: TextStyle(color: Colors.blueAccent[100]),),
+            onTap: null,
+          ),
+          ListTile(
             leading: Icon(Icons.menu_book_rounded, color: Colors.blueAccent[100]),
             title: Text('История'),
             onTap: () {
@@ -139,7 +144,7 @@ class _ProductBaseClassState extends State<ProductBaseClass> {
             },
           ),
           ListTile(
-            leading: Icon(Icons.heart_broken, color: Colors.blueAccent[100]),
+            leading: Icon(Icons.favorite, color: Colors.blueAccent[100]),
             title: Text('О разработчиках'),
             onTap: () {
               Navigator.popAndPushNamed(context, 'about_app');

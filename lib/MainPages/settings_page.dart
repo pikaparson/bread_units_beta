@@ -74,6 +74,11 @@ class _SettingsClassState extends State<SettingsClass> {
             },
           ),
           ListTile(
+            leading: Icon(Icons.settings, color: Colors.blueAccent[100]),
+            title: Text('Настройки', style: TextStyle(color: Colors.blueAccent[100]),),
+            onTap: null,
+          ),
+          ListTile(
             leading: Icon(Icons.question_mark, color: Colors.blueAccent[100]),
             title: Text('Справка'),
             onTap: () {
@@ -81,7 +86,7 @@ class _SettingsClassState extends State<SettingsClass> {
             },
           ),
           ListTile(
-            leading: Icon(Icons.heart_broken, color: Colors.blueAccent[100]),
+            leading: Icon(Icons.favorite, color: Colors.blueAccent[100]),
             title: Text('О разработчиках'),
             onTap: () {
               Navigator.popAndPushNamed(context, 'about_app');

@@ -65,6 +65,11 @@ class _HistoryClassState extends State<HistoryClass> {
             },
           ),
           ListTile(
+            leading: Icon(Icons.menu_book_rounded, color: Colors.blueAccent[100]),
+            title: Text('История', style: TextStyle(color: Colors.blueAccent[100]),),
+            onTap: null,
+          ),
+          ListTile(
             leading: Icon(Icons.settings, color: Colors.blueAccent[100]),
             title: Text('Настройки'),
             onTap: () {
@@ -79,7 +84,7 @@ class _HistoryClassState extends State<HistoryClass> {
             },
           ),
           ListTile(
-            leading: Icon(Icons.heart_broken, color: Colors.blueAccent[100]),
+            leading: Icon(Icons.favorite, color: Colors.blueAccent[100]),
             title: Text('О разработчиках'),
             onTap: () {
               Navigator.popAndPushNamed(context, 'about_app');

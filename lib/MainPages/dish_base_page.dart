@@ -107,6 +107,11 @@ class _DishBaseClassState extends State<DishBaseClass> {
             },
           ),
           ListTile(
+            leading: Icon(Icons.local_dining, color: Colors.blueAccent[100]),
+            title: Text('База блюд', style: TextStyle(color: Colors.blueAccent[100]),),
+            onTap: null,
+          ),
+          ListTile(
             leading: Icon(Icons.apple, color: Colors.blueAccent[100]),
             title: Text('База продуктов'),
             onTap: () {
@@ -135,7 +140,7 @@ class _DishBaseClassState extends State<DishBaseClass> {
             },
           ),
           ListTile(
-            leading: Icon(Icons.heart_broken, color: Colors.blueAccent[100]),
+            leading: Icon(Icons.favorite, color: Colors.blueAccent[100]),
             title: Text('О разработчиках'),
             onTap: () {
               Navigator.popAndPushNamed(context, 'about_app');
