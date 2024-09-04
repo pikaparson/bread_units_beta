@@ -43,34 +43,131 @@ class SQLhelper {
         createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
         )
       """);
-      await database.execute("""CREATE TABLE sets(
+      await database.execute("""CREATE TABLE breakfasts(
         id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-        name TEXT NOT NULL,
         createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
         )
       """);
-      await database.execute("""CREATE TABLE set_dish(
+      await database.execute("""CREATE TABLE breakfasts_dish(
         id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
         dish INTEGER REFERENCES dishes (id) NOT NULL,
-        setID INTEGER REFERENCES sets (id) NOT NULL,
+        breakfastsID INTEGER REFERENCES breakfasts (id) NOT NULL,
         grams INTEGER NOT NULL,
         createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
         )
       """);
-      await database.execute("""CREATE TABLE set_product(
+      await database.execute("""CREATE TABLE breakfasts_product(
         id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-        setID INTEGER REFERENCES sets (id) NOT NULL,
+        breakfastsID INTEGER REFERENCES breakfasts (id) NOT NULL,
         product INTEGER REFERENCES products (id) NOT NULL,
         grams INTEGER NOT NULL,
         createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
         )
       """);
-      await database.execute("""CREATE TABLE control(
+      await database.execute("""CREATE TABLE late_breakfasts(
         id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-        flag TEXT NOT NULL,
-        text TEXT NOT NULL,
-        dish INTEGER REFERENCES dishes (id)
-      )
+        createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+        )
+      """);
+      await database.execute("""CREATE TABLE late_breakfasts_dish(
+        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+        dish INTEGER REFERENCES dishes (id) NOT NULL,
+        late_breakfastsID INTEGER REFERENCES late_breakfasts (id) NOT NULL,
+        grams INTEGER NOT NULL,
+        createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+        )
+      """);
+      await database.execute("""CREATE TABLE late_breakfasts_product(
+        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+        late_breakfastsID INTEGER REFERENCES late_breakfasts (id) NOT NULL,
+        product INTEGER REFERENCES products (id) NOT NULL,
+        grams INTEGER NOT NULL,
+        createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+        )
+      """);
+      await database.execute("""CREATE TABLE lunches(
+        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+        createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+        )
+      """);
+      await database.execute("""CREATE TABLE lunches_dish(
+        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+        dish INTEGER REFERENCES dishes (id) NOT NULL,
+        dinnersID INTEGER REFERENCES dinners (id) NOT NULL,
+        grams INTEGER NOT NULL,
+        createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+        )
+      """);
+      await database.execute("""CREATE TABLE lunches_product(
+        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+        dinnersID INTEGER REFERENCES dinners (id) NOT NULL,
+        product INTEGER REFERENCES dinners (id) NOT NULL,
+        grams INTEGER NOT NULL,
+        createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+        )
+      """);
+      await database.execute("""CREATE TABLE late_lunches(
+        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+        createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+        )
+      """);
+      await database.execute("""CREATE TABLE late_lunches_dish(
+        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+        dish INTEGER REFERENCES dishes (id) NOT NULL,
+        late_dinnersID INTEGER REFERENCES late_dinners (id) NOT NULL,
+        grams INTEGER NOT NULL,
+        createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+        )
+      """);
+      await database.execute("""CREATE TABLE late_lunches_product(
+        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+        late_dinnersID INTEGER REFERENCES late_dinners (id) NOT NULL,
+        product INTEGER REFERENCES products (id) NOT NULL,
+        grams INTEGER NOT NULL,
+        createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+        )
+      """);
+      await database.execute("""CREATE TABLE dinners(
+        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+        createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+        )
+      """);
+      await database.execute("""CREATE TABLE dinners_dish(
+        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+        dish INTEGER REFERENCES dishes (id) NOT NULL,
+        dinnersID INTEGER REFERENCES dinners (id) NOT NULL,
+        grams INTEGER NOT NULL,
+        createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+        )
+      """);
+      await database.execute("""CREATE TABLE dinners_product(
+        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+        dinnersID INTEGER REFERENCES dinners (id) NOT NULL,
+        product INTEGER REFERENCES dinners (id) NOT NULL,
+        grams INTEGER NOT NULL,
+        createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+        )
+      """);
+      await database.execute("""CREATE TABLE late_dinners(
+        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+        createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+        )
+      """);
+      await database.execute("""CREATE TABLE late_dinners_dish(
+        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+        dish INTEGER REFERENCES dishes (id) NOT NULL,
+        late_dinnersID INTEGER REFERENCES late_dinners (id) NOT NULL,
+        grams INTEGER NOT NULL,
+        createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+        )
+      """);
+      await database.execute("""CREATE TABLE late_dinners_product(
+        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+        late_dinnersID INTEGER REFERENCES late_dinners (id) NOT NULL,
+        product INTEGER REFERENCES products (id) NOT NULL,
+        grams INTEGER NOT NULL,
+        createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+        )
       """);
     });
   }
