@@ -115,31 +115,27 @@ class _MainPageClassState extends State<MainPageClass> {
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Expanded(
-            child: _mainPageBU(),
-            flex: 2,
-          ),
-          Expanded(
-              child: _mainPageBreakfast(),
-              flex: 1
-          ),
-          Expanded(
-            child: _mainPageCards(),
-            flex: 6,
-          ),
+          _mainPageBU(),
+          _mainPageBreakfast(),
+          _mainPageCards(),
+          _mainPageBreakfast(),
         ],
       ),
     );
   }
 
-  Row _mainPageBU() {
+  Widget _mainPageBU() {
     double bu = 0.0;
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text('$bu ХЕ', style: TextStyle(fontSize: 34),)
-      ],
+    return Container(
+      padding: EdgeInsets.only(top: 25, bottom: 25),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text('$bu ХЕ', style: TextStyle(fontSize: 34),)
+        ],
+      ),
     );
   }
 
@@ -170,43 +166,42 @@ class _MainPageClassState extends State<MainPageClass> {
     );
   }
 
-
-
-
-
-  ListView _mainPageCards() {
-    return ListView.builder(
-        itemCount: _journals.length,
-        itemBuilder: (context, index) => Card (
-          color: Colors.grey[100],
-          margin: const EdgeInsets.all(15),
-          child: ListTile(
-            title: Text('${_journals[index]['name']}'),
-            trailing: SizedBox(
-                width: 100,
-                child: Row(
-                  children: [
-                    IconButton(
-                        onPressed: () {
-                          setState(() {
-                            _showForm(_journals[index]['id']);
-                          });
-                        },
-                        icon: const Icon(Icons.edit)
-                    ),
-                    IconButton(
-                        onPressed: () {
-                          setState(() {
-                            _deleteItem(_journals[index]['id']);
-                          });
-                        },
-                        icon: const Icon(Icons.delete)
-                    ),
-                  ],
-                )
+  Widget _mainPageCards() {
+    return SizedBox(
+      height: _journals.length * 76,
+      child: ListView.builder(
+          itemCount: _journals.length,
+          itemBuilder: (context, index) => Card (
+            color: Colors.grey[100],
+            margin: const EdgeInsets.all(7),
+            child: ListTile(
+              title: Text('${_journals[index]['name']}'),
+              trailing: SizedBox(
+                  width: 100,
+                  child: Row(
+                    children: [
+                      IconButton(
+                          onPressed: () {
+                            setState(() {
+                              _showForm(_journals[index]['id']);
+                            });
+                          },
+                          icon: const Icon(Icons.edit)
+                      ),
+                      IconButton(
+                          onPressed: () {
+                            setState(() {
+                              _deleteItem(_journals[index]['id']);
+                            });
+                          },
+                          icon: const Icon(Icons.delete)
+                      ),
+                    ],
+                  )
+              ),
             ),
-          ),
-        )
+          )
+      ),
     );
   }
 
