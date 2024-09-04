@@ -119,8 +119,22 @@ class _MainPageClassState extends State<MainPageClass> {
         children: [
           _mainPageBU(),
           _mainPageBreakfast(),
-          _mainPageCards(),
-          _mainPageBreakfast(),
+          SizedBox(height: 5,),
+          _mainPageCardsBreakfast(),
+          SizedBox(height: 5,),
+          _mainPageLateBreakfast(),
+          SizedBox(height: 5,),
+          SizedBox(height: 5,),
+          _mainPageLunch(),
+          SizedBox(height: 5,),
+          SizedBox(height: 5,),
+          _mainPageLateLunch(),
+          SizedBox(height: 5,),
+          SizedBox(height: 5,),
+          _mainPageDinner(),
+          SizedBox(height: 5,),
+          SizedBox(height: 5,),
+          _mainPageLateDinner()
         ],
       ),
     );
@@ -165,8 +179,138 @@ class _MainPageClassState extends State<MainPageClass> {
         )
     );
   }
+  Flexible _mainPageLateBreakfast() {
+    return Flexible(
+        child: Container(
+          color: Colors.blue[100],
+          padding: EdgeInsets.only(left: 30, right: 25),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('Поздний завтрак', style: TextStyle(fontSize: 20),),
+              Row(
+                children: [
+                  IconButton(
+                      onPressed: () {},
+                      icon: Icon(Icons.question_mark)
+                  ),
+                  IconButton(
+                      onPressed: () {},
+                      icon: Icon(Icons.add)
+                  )
+                ],
+              )
+            ],
+          ),
+        )
+    );
+  }
+  Flexible _mainPageLunch() {
+    return Flexible(
+        child: Container(
+          color: Colors.blue[100],
+          padding: EdgeInsets.only(left: 30, right: 25),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('Обед', style: TextStyle(fontSize: 20),),
+              Row(
+                children: [
+                  IconButton(
+                      onPressed: () {},
+                      icon: Icon(Icons.question_mark)
+                  ),
+                  IconButton(
+                      onPressed: () {},
+                      icon: Icon(Icons.add)
+                  )
+                ],
+              )
+            ],
+          ),
+        )
+    );
+  }
+  Flexible _mainPageLateLunch() {
+    return Flexible(
+        child: Container(
+          color: Colors.blue[100],
+          padding: EdgeInsets.only(left: 30, right: 25),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('Поздний обед', style: TextStyle(fontSize: 20),),
+              Row(
+                children: [
+                  IconButton(
+                      onPressed: () {},
+                      icon: Icon(Icons.question_mark)
+                  ),
+                  IconButton(
+                      onPressed: () {},
+                      icon: Icon(Icons.add)
+                  )
+                ],
+              )
+            ],
+          ),
+        )
+    );
+  }
+  Flexible _mainPageDinner() {
+    return Flexible(
+        child: Container(
+          color: Colors.blue[100],
+          padding: EdgeInsets.only(left: 30, right: 25),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('Ужин', style: TextStyle(fontSize: 20),),
+              Row(
+                children: [
+                  IconButton(
+                      onPressed: () {},
+                      icon: Icon(Icons.question_mark)
+                  ),
+                  IconButton(
+                      onPressed: () {},
+                      icon: Icon(Icons.add)
+                  )
+                ],
+              )
+            ],
+          ),
+        )
+    );
+  }
+  Flexible _mainPageLateDinner() {
+    return Flexible(
+        child: Container(
+          color: Colors.blue[100],
+          padding: EdgeInsets.only(left: 30, right: 25),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('Поздний ужин', style: TextStyle(fontSize: 20),),
+              Row(
+                children: [
+                  IconButton(
+                      onPressed: () {},
+                      icon: Icon(Icons.question_mark)
+                  ),
+                  IconButton(
+                      onPressed: () {},
+                      icon: Icon(Icons.add)
+                  )
+                ],
+              )
+            ],
+          ),
+        )
+    );
+  }
 
-  Widget _mainPageCards() {
+  Widget _mainPageCardsBreakfast() {
     return SizedBox(
       height: _journals.length * 76,
       child: ListView.builder(
@@ -328,4 +472,3 @@ class _MainPageClassState extends State<MainPageClass> {
   }
 
 }
-
