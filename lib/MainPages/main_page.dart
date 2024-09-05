@@ -28,6 +28,16 @@ class _MainPageClassState extends State<MainPageClass> {
     );
   }
 
+  Row _mainPageBU() {
+    double bu = 0.0;
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text('$bu ХЕ', style: TextStyle(fontSize: 34),)
+      ],
+    );
+  }
+
   Padding _mainPageFloatingActionButton() {
     return Padding(
       padding: const EdgeInsets.only(bottom: 40.0),
@@ -111,241 +121,55 @@ class _MainPageClassState extends State<MainPageClass> {
     );
   }
 
-  Widget _mainPageBody() {
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _mainPageBU(),
-          _mainPageBreakfast(),
-          SizedBox(height: 5,),
-          _mainPageCardsBreakfast(),
-          SizedBox(height: 5,),
-          _mainPageLateBreakfast(),
-          SizedBox(height: 5,),
-          SizedBox(height: 5,),
-          _mainPageLunch(),
-          SizedBox(height: 5,),
-          SizedBox(height: 5,),
-          _mainPageLateLunch(),
-          SizedBox(height: 5,),
-          SizedBox(height: 5,),
-          _mainPageDinner(),
-          SizedBox(height: 5,),
-          SizedBox(height: 5,),
-          _mainPageLateDinner()
-        ],
-      ),
+  Column _mainPageBody() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Expanded(
+          child: _mainPageBU(),
+          flex: 1,
+        ),
+        Expanded(
+          child: _mainPageCards(),
+          flex: 6,
+        ),
+      ],
     );
   }
 
-  Widget _mainPageBU() {
-    double bu = 0.0;
-    return Container(
-      padding: EdgeInsets.only(top: 25, bottom: 25),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text('$bu ХЕ', style: TextStyle(fontSize: 34),)
-        ],
-      ),
-    );
-  }
-
-  Flexible _mainPageBreakfast() {
-    return Flexible(
-        child: Container(
-          color: Colors.blue[100],
-          padding: EdgeInsets.only(left: 30, right: 25),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text('Завтрак', style: TextStyle(fontSize: 20),),
-              Row(
-                children: [
-                  IconButton(
-                      onPressed: () {},
-                      icon: Icon(Icons.question_mark)
-                  ),
-                  IconButton(
-                      onPressed: () {},
-                      icon: Icon(Icons.add)
-                  )
-                ],
-              )
-            ],
-          ),
-        )
-    );
-  }
-  Flexible _mainPageLateBreakfast() {
-    return Flexible(
-        child: Container(
-          color: Colors.blue[100],
-          padding: EdgeInsets.only(left: 30, right: 25),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text('Поздний завтрак', style: TextStyle(fontSize: 20),),
-              Row(
-                children: [
-                  IconButton(
-                      onPressed: () {},
-                      icon: Icon(Icons.question_mark)
-                  ),
-                  IconButton(
-                      onPressed: () {},
-                      icon: Icon(Icons.add)
-                  )
-                ],
-              )
-            ],
-          ),
-        )
-    );
-  }
-  Flexible _mainPageLunch() {
-    return Flexible(
-        child: Container(
-          color: Colors.blue[100],
-          padding: EdgeInsets.only(left: 30, right: 25),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text('Обед', style: TextStyle(fontSize: 20),),
-              Row(
-                children: [
-                  IconButton(
-                      onPressed: () {},
-                      icon: Icon(Icons.question_mark)
-                  ),
-                  IconButton(
-                      onPressed: () {},
-                      icon: Icon(Icons.add)
-                  )
-                ],
-              )
-            ],
-          ),
-        )
-    );
-  }
-  Flexible _mainPageLateLunch() {
-    return Flexible(
-        child: Container(
-          color: Colors.blue[100],
-          padding: EdgeInsets.only(left: 30, right: 25),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text('Поздний обед', style: TextStyle(fontSize: 20),),
-              Row(
-                children: [
-                  IconButton(
-                      onPressed: () {},
-                      icon: Icon(Icons.question_mark)
-                  ),
-                  IconButton(
-                      onPressed: () {},
-                      icon: Icon(Icons.add)
-                  )
-                ],
-              )
-            ],
-          ),
-        )
-    );
-  }
-  Flexible _mainPageDinner() {
-    return Flexible(
-        child: Container(
-          color: Colors.blue[100],
-          padding: EdgeInsets.only(left: 30, right: 25),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text('Ужин', style: TextStyle(fontSize: 20),),
-              Row(
-                children: [
-                  IconButton(
-                      onPressed: () {},
-                      icon: Icon(Icons.question_mark)
-                  ),
-                  IconButton(
-                      onPressed: () {},
-                      icon: Icon(Icons.add)
-                  )
-                ],
-              )
-            ],
-          ),
-        )
-    );
-  }
-  Flexible _mainPageLateDinner() {
-    return Flexible(
-        child: Container(
-          color: Colors.blue[100],
-          padding: EdgeInsets.only(left: 30, right: 25),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text('Поздний ужин', style: TextStyle(fontSize: 20),),
-              Row(
-                children: [
-                  IconButton(
-                      onPressed: () {},
-                      icon: Icon(Icons.question_mark)
-                  ),
-                  IconButton(
-                      onPressed: () {},
-                      icon: Icon(Icons.add)
-                  )
-                ],
-              )
-            ],
-          ),
-        )
-    );
-  }
-
-  Widget _mainPageCardsBreakfast() {
-    return SizedBox(
-      height: _journals.length * 76,
-      child: ListView.builder(
-          itemCount: _journals.length,
-          itemBuilder: (context, index) => Card (
-            color: Colors.grey[100],
-            margin: const EdgeInsets.all(7),
-            child: ListTile(
-              title: Text('${_journals[index]['name']}'),
-              trailing: SizedBox(
-                  width: 100,
-                  child: Row(
-                    children: [
-                      IconButton(
-                          onPressed: () {
-                            setState(() {
-                              _showForm(_journals[index]['id']);
-                            });
-                          },
-                          icon: const Icon(Icons.edit)
-                      ),
-                      IconButton(
-                          onPressed: () {
-                            setState(() {
-                              _deleteItem(_journals[index]['id']);
-                            });
-                          },
-                          icon: const Icon(Icons.delete)
-                      ),
-                    ],
-                  )
-              ),
+  ListView _mainPageCards() {
+    return ListView.builder(
+        itemCount: _journals.length,
+        itemBuilder: (context, index) => Card (
+          color: Colors.grey[100],
+          margin: const EdgeInsets.all(15),
+          child: ListTile(
+            title: Text('${_journals[index]['name']}'),
+            trailing: SizedBox(
+                width: 100,
+                child: Row(
+                  children: [
+                    IconButton(
+                        onPressed: () {
+                          setState(() {
+                            _showForm(_journals[index]['id']);
+                          });
+                        },
+                        icon: const Icon(Icons.edit)
+                    ),
+                    IconButton(
+                        onPressed: () {
+                          setState(() {
+                            _deleteItem(_journals[index]['id']);
+                          });
+                        },
+                        icon: const Icon(Icons.delete)
+                    ),
+                  ],
+                )
             ),
-          )
-      ),
+          ),
+        )
     );
   }
 
