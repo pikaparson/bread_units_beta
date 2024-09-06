@@ -5,6 +5,7 @@ import 'package:bread_units_beta/DataBase/pre_fill_products.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
+import 'pre_fill_products.dart';
 
 class SQLhelper {
 
@@ -396,6 +397,10 @@ class SQLhelper {
   Future<List<Map<String, dynamic>>?> getProductItem() async {
     final Database? db = await database;
     return db!.query('products', orderBy: 'id');
+  }
+  Future<List<Map<String, dynamic>>?> getProductItemOrderName() async {
+    final Database? db = await database;
+    return db!.query('products', orderBy: 'name');
   }
   // Обновление объекта по id
   Future<int?> updateProductItem(int id, String n, double c) async {
