@@ -103,7 +103,7 @@ class _SetProductClassState extends State<SetProductClass> {
     setId = await SQLhelper().controlSetId(setName);
 
     final data = await SQLhelper().controlGetSetProductItem(setId);
-    final dataProducts = await SQLhelper().getProductItem();
+    final dataProducts = await SQLhelper().getProductItemOrderName();
     setState(() {
       if(data != null)
       {

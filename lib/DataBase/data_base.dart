@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
+import 'pre_fill_products.dart';
 
 class SQLhelper {
 
@@ -29,6 +30,7 @@ class SQLhelper {
         createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
         )
         """);
+      await preFillProducts(database);
       await database.execute("""CREATE TABLE dishes(
         id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
         name TEXT NOT NULL,
@@ -372,6 +374,10 @@ class SQLhelper {
   Future<List<Map<String, dynamic>>?> getProductItem() async {
     final Database? db = await database;
     return db!.query('products', orderBy: 'id');
+  }
+  Future<List<Map<String, dynamic>>?> getProductItemOrderName() async {
+    final Database? db = await database;
+    return db!.query('products', orderBy: 'name');
   }
   // Обновление объекта по id
   Future<int?> updateProductItem(int id, String n, double c) async {
