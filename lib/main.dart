@@ -7,9 +7,6 @@ import 'package:bread_units_beta/MainPages/main_page.dart';
 import 'package:bread_units_beta/MainPages/product_base_page.dart';
 import 'package:bread_units_beta/MainPages/settings_page.dart';
 import 'MainPages/Compositions/composition.dart';
-import 'MainSetCreate/set_dish.dart';
-import 'MainSetCreate/set_navigation.dart';
-import 'MainSetCreate/set_product.dart';
 
 void main() => runApp(const MyApp());
 
@@ -30,9 +27,6 @@ class MyApp extends StatelessWidget {
         'help': (context) => HelpClass(),
         'about_app': (context) => AboutAppClass(),
         'composition': (context) => CompositionClass(),
-        'set_create': (context) => SetNavigationClass(),
-        'set_product': (context) => SetProductClass(),
-        'set_dish': (context) => SetDishClass(),
       },
       initialRoute: '/',
     );
