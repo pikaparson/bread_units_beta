@@ -146,6 +146,7 @@ class _MainPageClassState extends State<MainPageClass> {
       ),
     );
   }
+
   Widget _mainPageBreakfast() {
     return Flexible(
         child: Container(
@@ -161,7 +162,9 @@ class _MainPageClassState extends State<MainPageClass> {
                   children: [
                     Text("${BUbreakfast} ХE"),
                     IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          _showAboutDialog(0);
+                        },
                         icon: Icon(Icons.question_mark)
                     ),
                     IconButton(
@@ -193,7 +196,9 @@ class _MainPageClassState extends State<MainPageClass> {
                   children: [
                     Text("${BULbreakfast} ХE"),
                     IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          _showAboutDialog(1);
+                        },
                         icon: Icon(Icons.question_mark)
                     ),
                     IconButton(
@@ -225,7 +230,9 @@ class _MainPageClassState extends State<MainPageClass> {
                   children: [
                     Text("${BUlunch} ХE"),
                     IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          _showAboutDialog(2);
+                        },
                         icon: Icon(Icons.question_mark)
                     ),
                     IconButton(
@@ -257,7 +264,9 @@ class _MainPageClassState extends State<MainPageClass> {
                   children: [
                     Text("${BULlunch} ХE"),
                     IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          _showAboutDialog(3);
+                        },
                         icon: Icon(Icons.question_mark)
                     ),
                     IconButton(
@@ -289,7 +298,9 @@ class _MainPageClassState extends State<MainPageClass> {
                   children: [
                     Text("${BUdinner} ХE"),
                     IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          _showAboutDialog(4);
+                        },
                         icon: Icon(Icons.question_mark)
                     ),
                     IconButton(
@@ -321,7 +332,9 @@ class _MainPageClassState extends State<MainPageClass> {
                   children: [
                     Text("${BULdinner} ХE"),
                     IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          _showAboutDialog(5);
+                        },
                         icon: Icon(Icons.question_mark)
                     ),
                     IconButton(
@@ -339,6 +352,48 @@ class _MainPageClassState extends State<MainPageClass> {
     );
   }
 
+  void _showAboutDialog(int time) {
+    String contentText = '', titleText = '';
+    if (time == 0) {
+      titleText = "Завтрак";
+      contentText = "Промежуток времени: 00:00 - 08:59";
+    } else if (time == 1) {
+      titleText = "Поздний завтрак";
+      contentText = "Промежуток времени: 09:00 - 11:59";
+    } else if (time == 2) {
+      titleText = "Обед";
+      contentText = "Промежуток времени: 12:00 - 14:29";
+    } else if (time == 3) {
+      titleText = "Поздний обед";
+      contentText = "Промежуток времени: 14:30 - 16:29";
+    } else if (time == 4) {
+      titleText = "Ужин";
+      contentText = "Промежуток времени: 17:00 - 19:29";
+    } else if (time == 5) {
+      titleText = "Поздний";
+      contentText = "Промежуток времени: 19:30 - 23:59";
+    }
+
+    Widget okButton = TextButton(
+      child: Text("OK", style: TextStyle(color: Colors.black),),
+      onPressed: () {
+        Navigator.of(context).pop();
+      },
+    );
+    AlertDialog alert = AlertDialog(
+      title: Text(titleText, style: TextStyle(color: Colors.black),),
+      content: Text(contentText, style: TextStyle(color: Colors.black),),
+      actions: [
+        okButton,
+      ],
+    );
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
 
 
   void _showFormChoiceAdd(int time) {
