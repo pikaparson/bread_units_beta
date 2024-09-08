@@ -312,6 +312,42 @@ class SQLhelper {
     return db!.query('late_dinners', orderBy: 'id');
   }
 
+  // Вернуть сумму ХЕ промежутка
+  Future<String> returnBUSumma(int time) async {
+    final Database? db = await database;
+    var helper = null;
+    double sumBU = 0;
+    if (time == 0) {
+      helper = await db!.query('breakfasts', orderBy: 'id');
+    } else if (time == 1) {
+      helper = await db!.query('late_breakfasts', orderBy: 'id');
+    } else if (time == 2) {
+      helper = await db!.query('lunches', orderBy: 'id');
+    } else if (time == 3) {
+      helper = await db!.query('late_lunches', orderBy: 'id');
+    } else if (time == 4) {
+      helper = await db!.query('dinners', orderBy: 'id');
+    } else if (time == 5) {
+      helper = await db!.query('late_dinners', orderBy: 'id');
+    }
+
+    if (helper != null) {
+      for (var obj in helper) {
+        if (obj['product'] != null) {
+          sumBU = sumBU + double.parse("${obj['grams']}") * double.parse("${obj['carbohydrates']}") / 100 / 12;
+          continue;
+        } else if (obj['dish'] != null) {
+          sumBU = sumBU + double.parse("${obj['grams']}") * double.parse("${obj['carbohydrates']}") / 100 / 12;
+          continue;
+        }
+      }
+    }
+
+    return "${(sumBU).toStringAsFixed(3)}";
+  }
+
+
+
 
 
 

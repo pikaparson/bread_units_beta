@@ -171,6 +171,7 @@ class _MainPageClassState extends State<MainPageClass> {
                 padding: EdgeInsets.only(right: 18),
                 child: Row(
                   children: [
+                    Text("${BUbreakfast} ХE"),
                     IconButton(
                         onPressed: () {},
                         icon: Icon(Icons.question_mark)
@@ -202,6 +203,7 @@ class _MainPageClassState extends State<MainPageClass> {
                 padding: EdgeInsets.only(right: 18),
                 child: Row(
                   children: [
+                    Text("${BULbreakfast} ХE"),
                     IconButton(
                         onPressed: () {},
                         icon: Icon(Icons.question_mark)
@@ -233,6 +235,7 @@ class _MainPageClassState extends State<MainPageClass> {
                 padding: EdgeInsets.only(right: 18),
                 child: Row(
                   children: [
+                    Text("${BUlunch} ХE"),
                     IconButton(
                         onPressed: () {},
                         icon: Icon(Icons.question_mark)
@@ -264,6 +267,7 @@ class _MainPageClassState extends State<MainPageClass> {
                 padding: EdgeInsets.only(right: 18),
                 child: Row(
                   children: [
+                    Text("${BULlunch} ХE"),
                     IconButton(
                         onPressed: () {},
                         icon: Icon(Icons.question_mark)
@@ -295,6 +299,7 @@ class _MainPageClassState extends State<MainPageClass> {
                 padding: EdgeInsets.only(right: 18),
                 child: Row(
                   children: [
+                    Text("${BUdinner} ХE"),
                     IconButton(
                         onPressed: () {},
                         icon: Icon(Icons.question_mark)
@@ -326,6 +331,7 @@ class _MainPageClassState extends State<MainPageClass> {
                 padding: EdgeInsets.only(right: 18),
                 child: Row(
                   children: [
+                    Text("${BULdinner} ХE"),
                     IconButton(
                         onPressed: () {},
                         icon: Icon(Icons.question_mark)
@@ -401,8 +407,21 @@ class _MainPageClassState extends State<MainPageClass> {
                              _journalsLateDinner = [],
                              _journalsProducts = [],
                              _journalsDish = [];
+  String BUbreakfast = '',
+        BULbreakfast = '',
+        BUlunch = '',
+        BULlunch = '',
+        BUdinner = '',
+        BULdinner = '';
   bool _isLoading = true;
   Future<void> _refreshJournals() async {
+    BUbreakfast = await SQLhelper().returnBUSumma(0);
+    BULbreakfast = await SQLhelper().returnBUSumma(1);
+    BUlunch = await SQLhelper().returnBUSumma(2);
+    BULlunch = await SQLhelper().returnBUSumma(3);
+    BUdinner = await SQLhelper().returnBUSumma(4);
+    BULdinner = await SQLhelper().returnBUSumma(5);
+
     final dataLateDinner = await SQLhelper().getLateDinnerItem();
     final dataDinner = await SQLhelper().getDinnerItem();
     final dataLateLunch = await SQLhelper().getLateLunchItem();
@@ -444,6 +463,7 @@ class _MainPageClassState extends State<MainPageClass> {
       }
       _isLoading = false;
     });
+
   }
   @override
   void initState() {
@@ -660,7 +680,6 @@ class _MainPageClassState extends State<MainPageClass> {
             margin: const EdgeInsets.all(5),
             child: ListTile(
               title: Text('${_journalsBreakfast[index]['name']}'),
-              //toStringAsExponential(3)
               subtitle: Text('${_journalsBreakfast[index]['grams']} грамм(ов/а)\n${(double.parse('${_journalsBreakfast[index]['grams']}') * double.parse('${_journalsBreakfast[index]['carbohydrates']}') / 100 / 12).toStringAsFixed(2)} ХЕ'),
               trailing: SizedBox(
                   width: 100,
