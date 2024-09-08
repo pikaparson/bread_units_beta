@@ -343,7 +343,7 @@ class SQLhelper {
       }
     }
 
-    return "${(sumBU).toStringAsFixed(3)}";
+    return "${(sumBU).toStringAsFixed(2)}";
   }
 
 
