@@ -9,6 +9,9 @@ class DishBaseClass extends StatefulWidget {
 }
 
 class _DishBaseClassState extends State<DishBaseClass> {
+
+  final _key = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -191,59 +194,71 @@ class _DishBaseClassState extends State<DishBaseClass> {
               // это предотвратит закрытие текстовых полей программной клавиатурой
               bottom: MediaQuery.of(context).viewInsets.bottom + 275,
             ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                TextField(
-                  controller: _nameController,
-                  decoration: const InputDecoration(
-                    labelText: 'Название блюда',
-                    labelStyle: TextStyle(color: Colors.black),
-                    hintText: 'Ввод названия блюда',
-                    hintStyle: TextStyle(color: Colors.black54),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(
-                          Radius.circular(4.0)),
-                      borderSide: BorderSide(color: Colors.blueAccent),
+            child: Form(
+              key: _key,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    TextFormField(
+                      controller: _nameController,
+                      decoration: const InputDecoration(
+                        labelText: 'Название блюда',
+                        labelStyle: TextStyle(color: Colors.black),
+                        hintText: 'Ввод названия блюда',
+                        hintStyle: TextStyle(color: Colors.black54),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(4.0)),
+                        borderSide: BorderSide(color: Colors.blueAccent),
+                        ),
+                      focusColor: Colors.blueAccent,
                     ),
-                    focusColor: Colors.blueAccent,
+                      validator: (String? value) {
+                        if (value != null && value.isEmpty){
+                          return 'Пожалуйста, введите название блюда';
+                        }
+                        if (value != null && value.contains('\$')) {
+                          return 'Название блюда содержит запрещенный знак \$';
+                        }
+                      },
                   ),
-                ),
-                const SizedBox(
-                  height: 15,
-                ),
-                ElevatedButton(
-                  onPressed: () async {
-                    await _controlName();
-
-                    if (id == null){
-                      await _addItem();
-                    }
-                    else if (id != null) {
-                      await _updateItem(id);
-                    }
-                    // Очистим поле
-                    _nameController.text = '';
-                    await _refreshJournals();
-                    // Закрываем шторку
-                    if (!mounted) return;
-                    Navigator.of(context).pop();
-                    setState(() {
-                      Navigator.popAndPushNamed(context, 'composition');
-                    });
-                  },
-                  child: Text('Продолжить', style: TextStyle(color: Colors.black)),
-                ),
-                const SizedBox(
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  ElevatedButton(
+                    onPressed: () async {
+                      if(_key.currentState!.validate()) {
+                        await _controlName();
+                        if (id == null){
+                          await _addItem();
+                        }
+                        else if (id != null) {
+                          await _updateItem(id);
+                        }
+                        // Очистим поле
+                        _nameController.text = '';
+                        await _refreshJournals();
+                        // Закрываем шторку
+                        if (!mounted) return;
+                        Navigator.of(context).pop();
+                        setState(() {
+                          Navigator.popAndPushNamed(context, 'composition');
+                        });
+                      }
+                      },
+                    child: Text('Продолжить', style: TextStyle(color: Colors.black)),
+                  ),
+                  const SizedBox(
                   height: 5,
-                ),
-                ElevatedButton(
+                  ),
+                  ElevatedButton(
                     onPressed: () {
                       Navigator.of(context).pop();
-                    },
+                      },
                     child: Text('Отмена', style: TextStyle(color: Colors.black),))
               ],
+            )
             )
         )
     );

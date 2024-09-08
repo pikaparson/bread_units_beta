@@ -226,7 +226,7 @@ class _ProductBaseClassState extends State<ProductBaseClass> {
                     return 'Пожалуйста, введите название продукта';
                   }
                   if (value != null && value.contains('\$')) {
-                    return 'Название продукта сожержит запрещенный знак \$';
+                    return 'Название продукта содержит запрещенный знак \$';
                   }
                 },
               ),
