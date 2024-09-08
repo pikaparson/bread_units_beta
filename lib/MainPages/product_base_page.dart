@@ -179,6 +179,15 @@ class _ProductBaseClassState extends State<ProductBaseClass> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _carbohydratesController = TextEditingController();
 
+
+  bool? hasName;
+  Future<void> _refreshHasName(String? name) async {
+    bool? has = await SQLhelper().hasProductName(name);
+    setState(() {
+      hasName = has;
+    });
+  }
+
   void _showForm(int? id) async {
     if (id != null) {
       final existingJournal = _journals.firstWhere((element) =>
@@ -227,6 +236,12 @@ class _ProductBaseClassState extends State<ProductBaseClass> {
                   }
                   if (value != null && value.contains('\$')) {
                     return 'Название продукта содержит запрещенный знак \$';
+                  }
+                  setState(() {
+                    Future.microtask(() async => await _refreshHasName(value));
+                  });
+                  if (hasName!) {
+                    return 'Продукт с таким именем уже существует';
                   }
                 },
               ),
