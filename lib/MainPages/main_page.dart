@@ -22,22 +22,9 @@ class _MainPageClassState extends State<MainPageClass> {
   }
   AppBar _mainPageAppBar() {
     return AppBar(
-      title: Text('Калькулятор XE'),
+      title: Text('Прием пищи'),
       centerTitle: true,
       backgroundColor: Colors.blueAccent[100],
-    );
-  }
-
-  Widget _mainPageBU() {
-    double bu = 0.0;
-    return Container(
-      padding: EdgeInsets.only(top: 25, bottom: 25),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text('$bu ХЕ', style: TextStyle(fontSize: 34),)
-        ],
-      ),
     );
   }
 
@@ -130,7 +117,7 @@ class _MainPageClassState extends State<MainPageClass> {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
-          _mainPageBU(),
+          SizedBox(height: 15,),
           _mainPageBreakfast(),
           SizedBox(height: 5,),
           _mainPageCardsBreakfast(),
@@ -153,7 +140,8 @@ class _MainPageClassState extends State<MainPageClass> {
           SizedBox(height: 5,),
           _mainPageLateDinner(),
           SizedBox(height: 5,),
-          _mainPageCardsLateDinner()
+          _mainPageCardsLateDinner(),
+          SizedBox(height: 20,),
         ],
       ),
     );
