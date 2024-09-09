@@ -179,13 +179,13 @@ class _ProductBaseClassState extends State<ProductBaseClass> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _carbohydratesController = TextEditingController();
 
-
-  bool? hasName;
-  Future<void> _refreshHasName(String? name) async {
-    bool? has = await SQLhelper().hasProductName(name);
-    setState(() {
-      hasName = has;
-    });
+  bool _hasName(String name) {
+    for (var product in _journals) {
+      if (product['name'] == name) {
+        return true;
+      }
+    }
+    return false;
   }
 
   void _showForm(int? id) async {
@@ -222,7 +222,6 @@ class _ProductBaseClassState extends State<ProductBaseClass> {
                 decoration: const InputDecoration(
                   labelText: 'Название продукта',
                   labelStyle: TextStyle(color: Colors.black),
-                  hintStyle: TextStyle(color: Colors.black54),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.all(
                         Radius.circular(4.0)),
@@ -237,10 +236,7 @@ class _ProductBaseClassState extends State<ProductBaseClass> {
                   if (value != null && value.contains('\$')) {
                     return 'Название продукта содержит запрещенный знак \$';
                   }
-                  setState(() {
-                    Future.microtask(() async => await _refreshHasName(value));
-                  });
-                  if (hasName!) {
+                  if (_hasName(value!) == true) {
                     return 'Продукт с таким именем уже существует';
                   }
                 },

@@ -97,17 +97,6 @@ class SQLhelper {
     return await db?.update('sets', data, where: "id = ?", whereArgs: [id]);
   }
 
-  Future<bool> hasProductName(String? name) async {
-    final Database? db = await database;
-    final found = await db!.rawQuery('SELECT *FROM products WHERE name = \"$name\"');
-
-    if (found.isEmpty) {
-      return false;
-    } else {
-      return true;
-    }
-  }
-
   // Удалить по id
   Future<void> deleteSetItem(int id) async {
     final Database? db = await database;

@@ -173,6 +173,15 @@ class _DishBaseClassState extends State<DishBaseClass> {
     _refreshJournals();
   }
 
+  bool _hasName(String name) {
+    for(var dish in _journals) {
+      if (dish['name'] == name) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   final TextEditingController _nameController = TextEditingController();
   void _showForm(int? id) async {
     //если id == 0, то шторка для создания элемента
@@ -205,8 +214,6 @@ class _DishBaseClassState extends State<DishBaseClass> {
                       decoration: const InputDecoration(
                         labelText: 'Название блюда',
                         labelStyle: TextStyle(color: Colors.black),
-                        hintText: 'Ввод названия блюда',
-                        hintStyle: TextStyle(color: Colors.black54),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.all(
                             Radius.circular(4.0)),
@@ -220,6 +227,9 @@ class _DishBaseClassState extends State<DishBaseClass> {
                         }
                         if (value != null && value.contains('\$')) {
                           return 'Название блюда содержит запрещенный знак \$';
+                        }
+                        if (_hasName(value!)) {
+                          return 'Блюдо с таким именем уже существует';
                         }
                       },
                   ),
