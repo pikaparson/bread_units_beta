@@ -51,28 +51,41 @@ class _ProductBaseClassState extends State<ProductBaseClass> {
                     width: 100,
                     child: Row(
                       children: [
-                        IconButton(
-                            onPressed: () {
-                              setState(() {
-                                _showForm(_journals[index]['id']);
-                              });
-                            },
-                            icon: const Icon(Icons.edit)
-                        ),
-                        IconButton(
-                            onPressed: () {
-                              setState(() {
-                                _deleteItem(_journals[index]['id']);
-                              });
-                            },
-                            icon: const Icon(Icons.delete)
-                        ),
+                        returnEditIcon(_journals[index]['main'], index),
+                        returnDeleteIcon(_journals[index]['main'], index),
                       ],
                     )
                 ),
               ),
             )
     );
+  }
+
+  Widget returnDeleteIcon(int help, int index) {
+    if(help != 1) {
+      return IconButton(
+          onPressed: () {
+            setState(() {
+              _deleteItem(_journals[index]['id']);
+            });
+          },
+          icon: const Icon(Icons.delete)
+      );
+    }
+    return SizedBox.shrink();
+  }
+  Widget returnEditIcon(int help, int index) {
+    if(help != 1) {
+      return IconButton(
+          onPressed: () {
+            setState(() {
+              _showForm(_journals[index]['id']);
+            });
+          },
+          icon: const Icon(Icons.edit)
+      );
+    }
+    return SizedBox.shrink();
   }
 
   FloatingActionButton _productBaseFloatingActionButton() {
