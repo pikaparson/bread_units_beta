@@ -17,7 +17,6 @@ class _MainPageClassState extends State<MainPageClass> {
       appBar: _mainPageAppBar(),
       body: _mainPageBody(),
       drawer: _mainPageDrawer(),
-      //floatingActionButton: _mainPageFloatingActionButton(),
     );
   }
   AppBar _mainPageAppBar() {
@@ -25,21 +24,34 @@ class _MainPageClassState extends State<MainPageClass> {
       title: Text('Прием пищи'),
       centerTitle: true,
       backgroundColor: Colors.blueAccent[100],
+      actions: [
+        IconButton(
+            onPressed: () {appBarTime();},
+            icon: Icon(Icons.add)
+        ),
+      ],
     );
   }
 
-  //Padding _mainPageFloatingActionButton() {
-  //  return Padding(
-  //    padding: const EdgeInsets.only(bottom: 40.0),
-  //    child: FloatingActionButton(
-  //      onPressed: () {
-  //        _showForm(null);
-  //      },
-  //      child: Icon(Icons.add, color: Colors.black,),
-  //      backgroundColor: Colors.blueAccent[100],
-  //    ),
-  //  );
-  //}
+  void appBarTime() {
+    String datetime = DateTime.now().toString();
+    int hour = int.parse(datetime[11]) * 10 + int.parse(datetime[12]);
+    int minute = int.parse(datetime[14]) * 10 + int.parse(datetime[15]);
+    if ((0 <= hour && hour <= 8)) {
+      _showFormChoiceAdd(0);
+    } else if ((9 <= hour && hour <= 11)) {
+      _showFormChoiceAdd(1);
+    } else if ((12 <= hour && hour < 14) || (hour == 14 && minute <= 29)) {
+      _showFormChoiceAdd(2);
+    } else if ((hour == 14 && minute >= 30) || (15 == hour || hour == 16)) {
+      _showFormChoiceAdd(3);
+    } else if ((17 == hour || hour == 18) || (hour == 19 && minute <= 29)) {
+      _showFormChoiceAdd(4);
+    } else if ((hour == 19 && minute >= 30) || (20 <= hour || hour <= 23)) {
+      _showFormChoiceAdd(5);
+    }
+  }
+
 
   Drawer _mainPageDrawer() {
     return Drawer(
