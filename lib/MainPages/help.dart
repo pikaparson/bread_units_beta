@@ -32,13 +32,13 @@ class _HelpClassState extends State<HelpClass> {
         child: SafeArea(
             child: Column(
               children: [
-                Text(_aboutBU(), style: TextStyle(fontSize: 20),),
+                Text(_aboutBU(), style: TextStyle(fontSize: 20), textAlign: TextAlign.justify),
                 SizedBox(height: 12,),
-                Text(_aboutCalculate(), style: TextStyle(fontSize: 20),),
+                Text(_aboutCalculate(), style: TextStyle(fontSize: 20),textAlign: TextAlign.justify),
                 SizedBox(height: 12,),
-                Text(_aboutAppPartOne(), style: TextStyle(fontSize: 20),),
+                Text(_aboutAppPartOne(), style: TextStyle(fontSize: 20),textAlign: TextAlign.justify),
                 SizedBox(height: 12,),
-                Text(_aboutAppPartTwo(), style: TextStyle(fontSize: 20),)
+                Text(_aboutAppPartTwo(), style: TextStyle(fontSize: 20),textAlign: TextAlign.justify)
               ],
             )
         ),

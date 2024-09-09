@@ -30,14 +30,14 @@ class _AboutAppClassState extends State<AboutAppClass> {
       padding: EdgeInsets.only(left: 25, right: 15, top: 35),
       child: Column(
         children: [
-          Text(_aboutAppText(), style: TextStyle(fontSize: 16),)
+          Text(_aboutAppText(), style: TextStyle(fontSize: 16), textAlign: TextAlign.justify,)
         ],
       ),
     );
   }
 
   String _aboutAppText() {
-    return 'Приложение разработано командой ГПО.\n\nАвторы идеи: Качаева С.А., Глотов Д.Д.\n\nРазработчик: Качаева С.А.\n\nПрототип дизайна: Дей Д.В.\n\nМатериальная поддержка разработчика:\nГлотов Д.Д.';
+    return 'Приложение разработано командой ГПО.\n\nАвторы идеи: Качаева С.А., Глотов Д.Д.\n\nРазработчики: Качаева С.А., Глотов Д.Д.';
   }
 
   Drawer _aboutAppDrawer() {
