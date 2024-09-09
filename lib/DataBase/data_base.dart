@@ -8,7 +8,6 @@ import 'package:path_provider/path_provider.dart';
 import 'pre_fill_products.dart';
 
 class SQLhelper {
-
   static Database? _database;
 
   Future<Database?> get database async {
@@ -116,6 +115,7 @@ class SQLhelper {
       """);
     });
   }
+  
   // CONTROL --- CONTROL --- CONTROL --- CONTROL --- CONTROL --- CONTROL --- CONTROL --- CONTROL --- CONTROL --- CONTROL --- CONTROL --- CONTROL --- CONTROL --- CONTROL --- CONTROL --- CONTROL
   // Добавление имени блюда в контроль
   Future<int> controlInsertDishName(String d) async {

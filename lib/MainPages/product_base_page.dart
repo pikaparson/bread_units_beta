@@ -11,6 +11,8 @@ class ProductBaseClass extends StatefulWidget {
 
 class _ProductBaseClassState extends State<ProductBaseClass> {
 
+  final _key = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -190,6 +192,15 @@ class _ProductBaseClassState extends State<ProductBaseClass> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _carbohydratesController = TextEditingController();
 
+  bool _hasName(String name) {
+    for (var product in _journals) {
+      if (product['name'] == name) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   void _showForm(int? id) async {
     if (id != null) {
       final existingJournal = _journals.firstWhere((element) =>
@@ -212,18 +223,18 @@ class _ProductBaseClassState extends State<ProductBaseClass> {
             right: 15,
             bottom: MediaQuery.of(context).viewInsets.bottom + 275,
           ),
-          child: Column(
+          child: Form(
+            key: _key,
+            child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              TextField(
+              TextFormField(
                 controller: _nameController,
                 cursorColor: Colors.blueAccent[100],
                 decoration: const InputDecoration(
                   labelText: 'Название продукта',
                   labelStyle: TextStyle(color: Colors.black),
-                  hintText: 'Ввод названия продукта',
-                  hintStyle: TextStyle(color: Colors.black54),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.all(
                         Radius.circular(4.0)),
@@ -231,11 +242,22 @@ class _ProductBaseClassState extends State<ProductBaseClass> {
                   ),
                   focusColor: Colors.blueAccent,
                 ),
+                validator: (String? value) {
+                  if (value != null && value.isEmpty){
+                    return 'Пожалуйста, введите название продукта';
+                  }
+                  if (value != null && value.contains('\$')) {
+                    return 'Название продукта содержит запрещенный знак \$';
+                  }
+                  if (_hasName(value!) == true) {
+                    return 'Продукт с таким именем уже существует';
+                  }
+                },
               ),
               const SizedBox(
                 height: 15,
               ),
-              TextField(
+              TextFormField(
                 controller: _carbohydratesController,
                 cursorColor: Colors.blueAccent[100],
                 keyboardType: TextInputType.numberWithOptions(
@@ -247,7 +269,6 @@ class _ProductBaseClassState extends State<ProductBaseClass> {
                 decoration: const InputDecoration(
                   labelText: 'Количество углеводов',
                   labelStyle: TextStyle(color: Colors.black),
-                  hintText: 'Ввод количества углеводов',
                   hintStyle: TextStyle(color: Colors.black54),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.all(
@@ -255,51 +276,40 @@ class _ProductBaseClassState extends State<ProductBaseClass> {
                     borderSide: BorderSide(color: Colors.blueAccent),
                   ),
                 ),
+                validator: (value) {
+                  var carbs = double.parse(value.toString());
+                  if (carbs < 0 || carbs > 100) {
+                    return 'Было введено неправильное количество углеводов - ${value.toString()}';
+                  }
+                },
               ),
               const SizedBox(
                 height: 15,
               ),
               ElevatedButton(
                 onPressed: () async {
-                  if (double.parse('${_carbohydratesController.text}') >
-                      100 ||
-                      double.parse('${_carbohydratesController.text}') <
-                          0) {
-                    showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                              title: Text('Ошибка'),
-                              content: Text(
-                                  'Было введено неправильное количество углеводов - ${_carbohydratesController
-                                      .text}. \n Количество углеводов должно не превышать 100 грамм, но и не быть меньше нуля.'),
-                              actions: [ElevatedButton(onPressed: () {
-                                Navigator.of(context).pop();
-                              }, child: Text('Выйти'))
-                              ]
-                          );
-                        }
-                    );
-                  } else if (id == null) {
-                    await _addItem();
-                    // Очистим поле
-                    _nameController.text = '';
-                    _carbohydratesController.text = '';
-                    carbohydrates = 0;
-                    await _refreshJournals();
-                    // Закрываем шторку
-                    if (!mounted) return;
-                    Navigator.of(context).pop();
-                  } else if (id != null) {
-                    await _updateItem(id);
-                    // Очистим поле
-                    _nameController.text = '';
-                    _carbohydratesController.text = '';
-                    carbohydrates = 0;
-                    await _refreshJournals();
-                    // Закрываем шторку
-                    if (!mounted) return;
-                    Navigator.of(context).pop();
+                  if (_key.currentState!.validate()) {
+                    if (id == null) {
+                      await _addItem();
+                      // Очистим поле
+                      _nameController.text = '';
+                      _carbohydratesController.text = '';
+                      carbohydrates = 0;
+                      await _refreshJournals();
+                      // Закрываем шторку
+                      if (!mounted) return;
+                      Navigator.of(context).pop();
+                    } else if (id != null) {
+                      await _updateItem(id);
+                      // Очистим поле
+                      _nameController.text = '';
+                      _carbohydratesController.text = '';
+                      carbohydrates = 0;
+                      await _refreshJournals();
+                      // Закрываем шторку
+                      if (!mounted) return;
+                      Navigator.of(context).pop();
+                    }
                   }
                 },
                 child: Text(
@@ -316,6 +326,7 @@ class _ProductBaseClassState extends State<ProductBaseClass> {
                     'Отмена', style: TextStyle(color: Colors.black),))
             ],
           ),
+          )
         )
     );
   }
