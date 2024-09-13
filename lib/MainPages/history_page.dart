@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_calendar_carousel/classes/event.dart';
+import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart' show CalendarCarousel;
 
 class HistoryClass extends StatefulWidget {
   const HistoryClass({super.key});
@@ -12,7 +14,7 @@ class _HistoryClassState extends State<HistoryClass> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _historyAppBar(),
-      body: null,
+      body: _calendar(),
       drawer: _historyDrawer(),
     );
   }
@@ -22,6 +24,45 @@ class _HistoryClassState extends State<HistoryClass> {
         title: Text('История'),
         centerTitle: true,
         backgroundColor: Colors.blueAccent[100],
+    );
+  }
+
+  Widget _calendar() {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 16.0),
+      child: CalendarCarousel<Event>(
+        onDayPressed: (DateTime date, List<Event> events) {
+          //this.setState(() => _currentDate = date);
+        },
+        weekendTextStyle: TextStyle(
+          color: Colors.red,
+        ),
+        thisMonthDayBorderColor: Colors.grey,
+//      weekDays: null, /// for pass null when you do not want to render weekDays
+//      headerText: Container( /// Example for rendering custom header
+//        child: Text('Custom Header'),
+//      ),
+        customDayBuilder: (   /// you can provide your own build function to make custom day containers
+            bool isSelectable,
+            int index,
+            bool isSelectedDay,
+            bool isToday,
+            bool isPrevMonthDay,
+            TextStyle textStyle,
+            bool isNextMonthDay,
+            bool isThisMonthDay,
+            DateTime day,
+            ) {
+          /// If you return null, [CalendarCarousel] will build container for current [day] with default function.
+          /// This way you can build custom containers for specific days only, leaving rest as default.
+        },
+        weekFormat: false,
+        //markedDatesMap: _markedDateMap,
+        height: 430.0,
+        //selectedDateTime: _currentDate,
+        daysHaveCircularBorder: true, /// null for not rendering any border, true for circular border, false for rectangular border
+        locale: 'ru',
+      ),
     );
   }
 
