@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 
 import '../DataBase/data_base.dart';
 
+import 'package:flutter_calendar_carousel/classes/event.dart';
+import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart' show CalendarCarousel;
+
 class MainPageClass extends StatefulWidget {
   const MainPageClass({super.key});
 
@@ -11,6 +14,9 @@ class MainPageClass extends StatefulWidget {
 }
 
 class _MainPageClassState extends State<MainPageClass> {
+
+  DateTime _selectedDate = DateTime.now();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -123,12 +129,54 @@ class _MainPageClassState extends State<MainPageClass> {
     );
   }
 
+  Widget _calendar() {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 16.0),
+      child: CalendarCarousel<Event>(
+        onDayPressed: (DateTime date, List<Event> events) {
+          setState(() => _selectedDate = date);
+          _refreshJournals();
+        },
+        weekendTextStyle: TextStyle(
+          color: Colors.red,
+        ),
+        thisMonthDayBorderColor: Colors.blue,
+        selectedDateTime: _selectedDate,
+//      weekDays: null, /// for pass null when you do not want to render weekDays
+//      headerText: Container( /// Example for rendering custom header
+//        child: Text('Custom Header'),
+//      ),
+        customDayBuilder: (   /// you can provide your own build function to make custom day containers
+            bool isSelectable,
+            int index,
+            bool isSelectedDay,
+            bool isToday,
+            bool isPrevMonthDay,
+            TextStyle textStyle,
+            bool isNextMonthDay,
+            bool isThisMonthDay,
+            DateTime day,
+            ) {
+          /// If you return null, [CalendarCarousel] will build container for current [day] with default function.
+          /// This way you can build custom containers for specific days only, leaving rest as default.
+        },
+        weekFormat: false,
+        //markedDatesMap: _markedDateMap,
+        height: 430.0,
+        //selectedDateTime: _currentDate,
+        daysHaveCircularBorder: true, /// null for not rendering any border, true for circular border, false for rectangular border
+        locale: 'ru',
+      ),
+    );
+  }
+
   Widget _mainPageBody() {
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
+          _calendar(),
           SizedBox(height: 15,),
           _mainPageBreakfast(),
           SizedBox(height: 5,),
@@ -477,12 +525,12 @@ class _MainPageClassState extends State<MainPageClass> {
     BUdinner = await SQLhelper().returnBUSumma(4);
     BULdinner = await SQLhelper().returnBUSumma(5);
 
-    final dataLateDinner = await SQLhelper().getLateDinnerItem();
-    final dataDinner = await SQLhelper().getDinnerItem();
-    final dataLateLunch = await SQLhelper().getLateLunchItem();
-    final dataLunch = await SQLhelper().getLunchItem();
-    final dataLateBreakfast = await SQLhelper().getLateBreakfastItem();
-    final dataBreakfast = await SQLhelper().getBreakfastItem();
+    final dataLateDinner = await SQLhelper().getLateDinnerItem(_selectedDate);
+    final dataDinner = await SQLhelper().getDinnerItem(_selectedDate);
+    final dataLateLunch = await SQLhelper().getLateLunchItem(_selectedDate);
+    final dataLunch = await SQLhelper().getLunchItem(_selectedDate);
+    final dataLateBreakfast = await SQLhelper().getLateBreakfastItem(_selectedDate);
+    final dataBreakfast = await SQLhelper().getBreakfastItem(_selectedDate);
     final dataProducts = await SQLhelper().getProductItem();
     final dataDish = await SQLhelper().getDishItem();
     setState(() {
@@ -518,8 +566,8 @@ class _MainPageClassState extends State<MainPageClass> {
       }
       _isLoading = false;
     });
-
   }
+
   @override
   void initState() {
     super.initState();
@@ -588,8 +636,6 @@ class _MainPageClassState extends State<MainPageClass> {
                   decoration: const InputDecoration(
                     labelText: 'Граммы',
                     labelStyle: TextStyle(color: Colors.black),
-                    hintText: 'Ввод граммов',
-                    hintStyle: TextStyle(color: Colors.black54),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.all(
                           Radius.circular(4.0)),
@@ -1005,8 +1051,6 @@ class _MainPageClassState extends State<MainPageClass> {
                   decoration: const InputDecoration(
                     labelText: 'Граммы',
                     labelStyle: TextStyle(color: Colors.black),
-                    hintText: 'Ввод граммов',
-                    hintStyle: TextStyle(color: Colors.black54),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.all(
                           Radius.circular(4.0)),
@@ -1050,17 +1094,17 @@ class _MainPageClassState extends State<MainPageClass> {
 
   //Вставить новый объект в базу данных
   Future<void> _addItem(int? idDish, int? idProduct, int grams, int time) async {
-    await SQLhelper().createTimeItem(idDish, idProduct, grams, time);
+    await SQLhelper().createTimeItem(idDish, idProduct, grams, time, _selectedDate);
     await _refreshJournals();
   }
   //Обновить существующий объект
   Future<void> _updateItem(int? idDish, int? idProduct, int id, int grams, int time) async {
-    await SQLhelper().updateTimeItem(idDish, idProduct, id, grams, time);
+    await SQLhelper().updateTimeItem(idDish, idProduct, id, grams, time, _selectedDate);
     await _refreshJournals();
   }
   //Удалить существующий объект
-  void _deleteItem(int id, int time) async{
-    await SQLhelper().deleteTimeItem(id, time);
+  void _deleteItem(int id, int time ) async{
+    await SQLhelper().deleteTimeItem(id, time, _selectedDate);
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
       content: Text('Успешное удаление объекта!'),
     ));
