@@ -430,9 +430,36 @@ class SQLhelper {
     return db!.insert('products', data, conflictAlgorithm: ConflictAlgorithm.replace);
   }
   // Прочитать все элементы (журнал)
-  Future<List<Map<String, dynamic>>?> getProductItem() async {
+  // Future<List<Map<String, dynamic>>?> getProductItem() async {
+  //   final Database? db = await database;
+  //   return db!.query('products', orderBy: 'id');
+  // }
+  Future<List<Map<String, dynamic>>?> getProductItem([String sortKey = 'id', bool ascending = true]) async {
     final Database? db = await database;
-    return db!.query('products', orderBy: 'id');
+    String orderByClause;
+
+    switch (sortKey) {
+      case 'name':
+      // Сортировка по алфавиту
+        orderByClause = 'name ${ascending ? 'ASC' : 'DESC'}';
+        break;
+
+      case 'carbohydrates':
+      // Сортировка по углеводам
+        orderByClause = 'carbohydrates ${ascending ? 'ASC' : 'DESC'}';
+        break;
+
+      case 'customFirst':
+      // Сначала пользовательские продукты, затем встроенные
+        orderByClause = 'main ${ascending ? 'ASC' : 'DESC'}, createdAt ASC';
+        break;
+
+      default:
+      // По умолчанию - по id
+        orderByClause = 'id';
+    }
+
+    return db!.query('products', orderBy: orderByClause);
   }
   Future<List<Map<String, dynamic>>?> getProductItemOrderName() async {
     final Database? db = await database;

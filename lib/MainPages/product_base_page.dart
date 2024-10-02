@@ -28,7 +28,22 @@ class _ProductBaseClassState extends State<ProductBaseClass> {
       title: Text('База продуктов'),
       centerTitle: true,
       backgroundColor: Colors.blueAccent[100],
+      actions: [
+        IconButton(
+            onPressed: () {appBarSort();},
+            icon: Icon(Icons.sort)
+        ),
+      ],
     );
+  }
+
+  void appBarSort() {
+    // setState(() {
+    //   _journals = SQLhelper().getProductItem(_sortKey = 'name', _ascending = true);
+    // });
+    _sortKey = 'name';
+    _ascending = true;
+    _refreshJournals();
   }
 
   ListView _productBaseBody() {
@@ -173,9 +188,11 @@ class _ProductBaseClassState extends State<ProductBaseClass> {
 
   List<Map<String, dynamic>> _journals = [];
   bool _isLoading = true;
+  String _sortKey = 'id'; // сортировка по ключу
+  bool _ascending = true; // сортировка по возрастанию/убыванию
 
   Future<void> _refreshJournals() async {
-    final data = await SQLhelper().getProductItem();
+    final data = await SQLhelper().getProductItem(_sortKey, _ascending);
     setState(() {
       if (data != null) _journals = data;
       _isLoading = false;
