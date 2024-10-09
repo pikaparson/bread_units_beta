@@ -16,6 +16,7 @@ class MainPageClass extends StatefulWidget {
 class _MainPageClassState extends State<MainPageClass> {
 
   DateTime _selectedDate = DateTime.now();
+  bool _isCalendarVisible = false;
 
   @override
   Widget build(BuildContext context) {
@@ -25,16 +26,27 @@ class _MainPageClassState extends State<MainPageClass> {
       drawer: _mainPageDrawer(),
     );
   }
+
   AppBar _mainPageAppBar() {
     return AppBar(
       title: Text('Прием пищи'),
       centerTitle: true,
       backgroundColor: Colors.blueAccent[100],
       actions: [
+        IconButton.filled(
+            onPressed: (){
+              setState(() {
+                _isCalendarVisible = !_isCalendarVisible;
+              });
+            },
+            icon: Icon(Icons.calendar_month),
+            isSelected: _isCalendarVisible,
+        ),
         IconButton(
             onPressed: () {appBarTime();},
             icon: Icon(Icons.add)
         ),
+
       ],
     );
   }
@@ -176,7 +188,8 @@ class _MainPageClassState extends State<MainPageClass> {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
-          _calendar(),
+          if(_isCalendarVisible)
+            _calendar(),
           SizedBox(height: 15,),
           _mainPageBreakfast(),
           SizedBox(height: 5,),
