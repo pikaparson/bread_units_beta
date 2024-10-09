@@ -298,32 +298,32 @@ class SQLhelper {
   // Прочитать все элементы завтрака
   Future<List<Map<String, dynamic>>?> getBreakfastItem(DateTime selectedDate) async {
     final Database? db = await database;
-    return db!.query('breakfasts', orderBy: 'id', where: 'createdAt = ?', whereArgs: [castDateTime(selectedDate)]);
+    return db!.query('breakfasts', orderBy: 'id', where: 'createdDate = ?', whereArgs: [castDateTime(selectedDate)]);
   }
   // Прочитать все элементы позднего завтрака
   Future<List<Map<String, dynamic>>?> getLateBreakfastItem(DateTime selectedDate) async {
     final Database? db = await database;
-    return db!.query('late_breakfasts', orderBy: 'id', where: 'createdAt = ?', whereArgs: [castDateTime(selectedDate)]);
+    return db!.query('late_breakfasts', orderBy: 'id', where: 'createdDate = ?', whereArgs: [castDateTime(selectedDate)]);
   }
   // Прочитать все элементы обеда
   Future<List<Map<String, dynamic>>?> getLunchItem(DateTime selectedDate) async {
     final Database? db = await database;
-    return db!.query('lunches', orderBy: 'id', where: 'createdAt = ?', whereArgs: [castDateTime(selectedDate)]);
+    return db!.query('lunches', orderBy: 'id', where: 'createdDate = ?', whereArgs: [castDateTime(selectedDate)]);
   }
   // Прочитать все элементы позднего обеда
   Future<List<Map<String, dynamic>>?> getLateLunchItem(DateTime selectedDate) async {
     final Database? db = await database;
-    return db!.query('late_lunches', orderBy: 'id', where: 'createdAt = ?', whereArgs: [castDateTime(selectedDate)]);
+    return db!.query('late_lunches', orderBy: 'id', where: 'createdDate = ?', whereArgs: [castDateTime(selectedDate)]);
   }
   // Прочитать все элементы ужина
   Future<List<Map<String, dynamic>>?> getDinnerItem(DateTime selectedDate) async {
     final Database? db = await database;
-    return db!.query('dinners', orderBy: 'id', where: 'createdAt = ?', whereArgs: [castDateTime(selectedDate)]);
+    return db!.query('dinners', orderBy: 'id', where: 'createdDate = ?', whereArgs: [castDateTime(selectedDate)]);
   }
   // Прочитать все элементы позднего ужина
   Future<List<Map<String, dynamic>>?> getLateDinnerItem(DateTime selectedDate) async {
     final Database? db = await database;
-    return db!.query('late_dinners', orderBy: 'id', where: 'createdAt = ?', whereArgs: [castDateTime(selectedDate)]);
+    return db!.query('late_dinners', orderBy: 'id', where: 'createdDate = ?', whereArgs: [castDateTime(selectedDate)]);
   }
 
   // Вернуть сумму ХЕ промежутка

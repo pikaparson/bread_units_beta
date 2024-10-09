@@ -133,9 +133,9 @@ class _MainPageClassState extends State<MainPageClass> {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 16.0),
       child: CalendarCarousel<Event>(
-        onDayPressed: (DateTime date, List<Event> events) {
+        onDayPressed: (DateTime date, List<Event> events) async {
           setState(() => _selectedDate = date);
-          _refreshJournals();
+          await _refreshJournals();
         },
         weekendTextStyle: TextStyle(
           color: Colors.red,
