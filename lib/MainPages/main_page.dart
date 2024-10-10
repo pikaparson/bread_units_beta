@@ -109,13 +109,6 @@ class _MainPageClassState extends State<MainPageClass> {
             },
           ),
           ListTile(
-            leading: Icon(Icons.menu_book_rounded, color: Colors.blueAccent[100]),
-            title: Text('История'),
-            onTap: () {
-              Navigator.popAndPushNamed(context, 'history');
-            },
-          ),
-          ListTile(
             leading: Icon(Icons.settings, color: Colors.blueAccent[100]),
             title: Text('Настройки'),
             onTap: () {
@@ -178,6 +171,9 @@ class _MainPageClassState extends State<MainPageClass> {
         //selectedDateTime: _currentDate,
         daysHaveCircularBorder: true, /// null for not rendering any border, true for circular border, false for rectangular border
         locale: 'ru',
+        //the lines under-- are not working, the calendar still 'shmaaaks' and 'blooobs' when try to scroll
+        isScrollable: false,
+        pageScrollPhysics: const NeverScrollableScrollPhysics(),
       ),
     );
   }
