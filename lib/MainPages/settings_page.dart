@@ -67,13 +67,6 @@ class _SettingsClassState extends State<SettingsClass> {
             },
           ),
           ListTile(
-            leading: Icon(Icons.menu_book_rounded, color: Colors.blueAccent[100]),
-            title: Text('История'),
-            onTap: () {
-              Navigator.popAndPushNamed(context, 'history');
-            },
-          ),
-          ListTile(
             leading: Icon(Icons.settings, color: Colors.blueAccent[100]),
             title: Text('Настройки', style: TextStyle(color: Colors.blueAccent[100]),),
             onTap: null,
