@@ -114,7 +114,7 @@ class SQLhelper {
       """);
     });
   }
-  
+
   // CONTROL --- CONTROL --- CONTROL --- CONTROL --- CONTROL --- CONTROL --- CONTROL --- CONTROL --- CONTROL --- CONTROL --- CONTROL --- CONTROL --- CONTROL --- CONTROL --- CONTROL --- CONTROL
   // Добавление имени блюда в контроль
   Future<int> controlInsertDishName(String d) async {
@@ -327,22 +327,22 @@ class SQLhelper {
   }
 
   // Вернуть сумму ХЕ промежутка
-  Future<String> returnBUSumma(int time) async {
+  Future<String> returnBUSumma(int time, DateTime selectedDate) async {
     final Database? db = await database;
     var helper = null;
     double sumBU = 0;
     if (time == 0) {
-      helper = await db!.query('breakfasts', orderBy: 'id');
+      helper = await db!.query('breakfasts', orderBy: 'id', where: 'createdDate = ?', whereArgs: [castDateTime(selectedDate)]);
     } else if (time == 1) {
-      helper = await db!.query('late_breakfasts', orderBy: 'id');
+      helper = await db!.query('late_breakfasts', orderBy: 'id', where: 'createdDate = ?', whereArgs: [castDateTime(selectedDate)]);
     } else if (time == 2) {
-      helper = await db!.query('lunches', orderBy: 'id');
+      helper = await db!.query('lunches', orderBy: 'id', where: 'createdDate = ?', whereArgs: [castDateTime(selectedDate)]);
     } else if (time == 3) {
-      helper = await db!.query('late_lunches', orderBy: 'id');
+      helper = await db!.query('late_lunches', orderBy: 'id', where: 'createdDate = ?', whereArgs: [castDateTime(selectedDate)]);
     } else if (time == 4) {
-      helper = await db!.query('dinners', orderBy: 'id');
+      helper = await db!.query('dinners', orderBy: 'id', where: 'createdDate = ?', whereArgs: [castDateTime(selectedDate)]);
     } else if (time == 5) {
-      helper = await db!.query('late_dinners', orderBy: 'id');
+      helper = await db!.query('late_dinners', orderBy: 'id', where: 'createdDate = ?', whereArgs: [castDateTime(selectedDate)]);
     }
 
     if (helper != null) {
