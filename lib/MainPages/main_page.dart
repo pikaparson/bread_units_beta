@@ -527,12 +527,12 @@ class _MainPageClassState extends State<MainPageClass> {
         BULdinner = '';
   bool _isLoading = true;
   Future<void> _refreshJournals() async {
-    BUbreakfast = await SQLhelper().returnBUSumma(0);
-    BULbreakfast = await SQLhelper().returnBUSumma(1);
-    BUlunch = await SQLhelper().returnBUSumma(2);
-    BULlunch = await SQLhelper().returnBUSumma(3);
-    BUdinner = await SQLhelper().returnBUSumma(4);
-    BULdinner = await SQLhelper().returnBUSumma(5);
+    BUbreakfast = await SQLhelper().returnBUSumma(0, _selectedDate);
+    BULbreakfast = await SQLhelper().returnBUSumma(1, _selectedDate);
+    BUlunch = await SQLhelper().returnBUSumma(2, _selectedDate);
+    BULlunch = await SQLhelper().returnBUSumma(3, _selectedDate);
+    BUdinner = await SQLhelper().returnBUSumma(4, _selectedDate);
+    BULdinner = await SQLhelper().returnBUSumma(5, _selectedDate);
 
     final dataLateDinner = await SQLhelper().getLateDinnerItem(_selectedDate);
     final dataDinner = await SQLhelper().getDinnerItem(_selectedDate);
