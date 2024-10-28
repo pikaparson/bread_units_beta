@@ -681,101 +681,126 @@ class _MainPageClassState extends State<MainPageClass> {
     );
   }
   void _showFormAddDish(int time) {
-    int dishId = _journalsDish[0]['id'];
-    showModalBottomSheet(
-        isScrollControlled: true,
+    if (_journalsDish.isEmpty) {
+      Widget okButton = ElevatedButton(
+        child: Text("Хорошо, я добавлю", style: TextStyle(color: Colors.black),),
+        onPressed: () {
+          Navigator.of(context).pop();
+        },
+      );
+      AlertDialog alert = AlertDialog(
+        content: Center(
+          heightFactor: 2,
+          child: Text("В базе данных нет блюд", style: TextStyle(color: Colors.black),),
+        ),
+        actions: [
+          okButton,
+        ],
+      );
+      showDialog(
         context: context,
-        elevation: 5,
-        backgroundColor: Colors.white,
-        isDismissible: false,
-        builder: (_) => Container(
-            padding: EdgeInsets.only(
-              top: 15,
-              left: 15,
-              right: 15,
-              // это предотвратит закрытие текстовых полей программной клавиатурой
-              bottom: MediaQuery.of(context).viewInsets.bottom + 50,
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                //выбор продукта
-                DropdownButtonFormField(
-                  decoration: const InputDecoration(
-                    labelText: 'Выберите блюдо',
-                    labelStyle: TextStyle(color: Colors.black),
-                    hintStyle: TextStyle(color: Colors.black54),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(
-                          Radius.circular(4.0)),
-                      borderSide: BorderSide(color: Colors.blueAccent),
-                    ),
-                  ),
-                  isExpanded: false,
-                  value: dishId,
-                  items: _journalsDish.map<DropdownMenuItem<int>>((e) {
-                    return DropdownMenuItem
-                      (
-                      child: Text(
-                        e["name"],
+        builder: (BuildContext context) {
+          return alert;
+        },
+      );
+    }
+    else {
+      int dishId = _journalsDish[0]['id'];
+      showModalBottomSheet(
+          isScrollControlled: true,
+          context: context,
+          elevation: 5,
+          backgroundColor: Colors.white,
+          isDismissible: false,
+          builder: (_) => Container(
+              padding: EdgeInsets.only(
+                top: 15,
+                left: 15,
+                right: 15,
+                // это предотвратит закрытие текстовых полей программной клавиатурой
+                bottom: MediaQuery.of(context).viewInsets.bottom + 50,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  //выбор продукта
+                  DropdownButtonFormField(
+                    decoration: const InputDecoration(
+                      labelText: 'Выберите блюдо',
+                      labelStyle: TextStyle(color: Colors.black),
+                      hintStyle: TextStyle(color: Colors.black54),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(
+                            Radius.circular(4.0)),
+                        borderSide: BorderSide(color: Colors.blueAccent),
                       ),
-                      value: e["id"],
-                    );
-                  }).toList(),
-                  onChanged: (t) {
-                    setState(() {
-                      dishId = t!;
-                      MediaQuery.of(context).viewInsets.bottom;
-                    });
-                  },
-                ),
-                SizedBox(height: 15,),
-                // ввод граммов
-                SizedBox(height: 15,),
-                // ввод граммов
-                TextField(
-                  controller: _gramsController,
-                  keyboardType: TextInputType.numberWithOptions(decimal: true),
-                  decoration: const InputDecoration(
-                    labelText: 'Граммы',
-                    labelStyle: TextStyle(color: Colors.black),
-                    hintText: 'Ввод граммов',
-                    hintStyle: TextStyle(color: Colors.black54),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(
-                          Radius.circular(4.0)),
-                      borderSide: BorderSide(color: Colors.blueAccent),
                     ),
-                    focusColor: Colors.blueAccent,
+                    isExpanded: false,
+                    value: dishId,
+                    items: _journalsDish.map<DropdownMenuItem<int>>((e) {
+                      return DropdownMenuItem
+                        (
+                        child: Text(
+                          e["name"],
+                        ),
+                        value: e["id"],
+                      );
+                    }).toList(),
+                    onChanged: (t) {
+                      setState(() {
+                        dishId = t!;
+                        MediaQuery.of(context).viewInsets.bottom;
+                      });
+                    },
                   ),
-                ),
-                const SizedBox(
-                  height: 15,
-                ),
-                ElevatedButton(
-                  onPressed: () async {
-                    _addItem(dishId, null, int.parse("${_gramsController.text}"), time);
-                    _gramsController.text = '';
-                    await _refreshJournals();
-                    // Закрываем шторку
-                    if (!mounted) return;
-                    Navigator.of(context).pop();
-                  },
-                  child: Text('Добавить', style: TextStyle(color: Colors.black)),
-                ),
-                const SizedBox(
-                  height: 5,
-                ),
-                ElevatedButton(
-                    onPressed: () {
+                  SizedBox(height: 15,),
+                  // ввод граммов
+                  SizedBox(height: 15,),
+                  // ввод граммов
+                  TextField(
+                    controller: _gramsController,
+                    keyboardType: TextInputType.numberWithOptions(decimal: true),
+                    decoration: const InputDecoration(
+                      labelText: 'Граммы',
+                      labelStyle: TextStyle(color: Colors.black),
+                      hintText: 'Ввод граммов',
+                      hintStyle: TextStyle(color: Colors.black54),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(
+                            Radius.circular(4.0)),
+                        borderSide: BorderSide(color: Colors.blueAccent),
+                      ),
+                      focusColor: Colors.blueAccent,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  ElevatedButton(
+                    onPressed: () async {
+                      _addItem(dishId, null, int.parse("${_gramsController.text}"), time);
+                      _gramsController.text = '';
+                      await _refreshJournals();
+                      // Закрываем шторку
+                      if (!mounted) return;
                       Navigator.of(context).pop();
                     },
-                    child: Text('Отмена', style: TextStyle(color: Colors.black),))
-              ],
-            )
-        )
-    );
+                    child: Text('Добавить', style: TextStyle(color: Colors.black)),
+                  ),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Text('Отмена', style: TextStyle(color: Colors.black),))
+                ],
+              )
+          )
+      );
+    }
   }
 
 
