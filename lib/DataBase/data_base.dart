@@ -450,11 +450,6 @@ class SQLhelper {
         orderByClause = 'carbohydrates ${ascending ? 'ASC' : 'DESC'}';
         break;
 
-      // case 'customOnly':
-      // // Только пользовательские продукты
-      //   orderByClause = 'main ${ascending ? 'ASC' : 'DESC'}, createdAt ASC';
-      //   break;
-
       default:
       // По умолчанию - по id
         orderByClause = 'id';
@@ -514,10 +509,45 @@ class SQLhelper {
     return db!.insert('dishes', data, conflictAlgorithm: ConflictAlgorithm.replace);
   }
   // Прочитать все элементы (журнал)
-  Future<List<Map<String, dynamic>>?> getDishItem() async {
+  // Future<List<Map<String, dynamic>>?> getDishItem() async {
+  //   final Database? db = await database;
+  //   return db!.query('dishes', orderBy: 'id');
+  // }
+
+  Future<List<Map<String, dynamic>>?> getDishItem([String sortKey = 'id', bool ascending = true, bool isCustom = true, bool isBuiltIn = true]) async {
     final Database? db = await database;
-    return db!.query('dishes', orderBy: 'id');
+    String orderByClause;
+    String whereCustomerOrBuiltIn;
+
+    switch (sortKey) {
+      case 'name':
+      // Сортировка по алфавиту
+        orderByClause = 'name ${ascending ? 'ASC' : 'DESC'}';
+        break;
+
+      case 'carbohydrates':
+      // Сортировка по углеводам
+        orderByClause = 'carbohydrates ${ascending ? 'ASC' : 'DESC'}';
+        break;
+
+      default:
+      // По умолчанию - по id
+        orderByClause = 'id';
+    }
+
+    if (isCustom == true && isBuiltIn == false) {
+      whereCustomerOrBuiltIn = 'WHERE main = 0';
+    }
+    else if (isCustom == false && isBuiltIn == true) {
+      whereCustomerOrBuiltIn = 'WHERE main = 1';
+    }
+    else {
+      whereCustomerOrBuiltIn = '';
+    }
+
+    return db!.query('dishes $whereCustomerOrBuiltIn', orderBy: orderByClause);
   }
+
   // Обновление объекта по id
   Future<int?> updateDishItem(int id, String n) async {
     final Database? db = await database;

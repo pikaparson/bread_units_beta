@@ -27,7 +27,134 @@ class _DishBaseClassState extends State<DishBaseClass> {
       title: Text('База блюд'),
       centerTitle: true,
       backgroundColor: Colors.blueAccent[100],
+      actions: [
+        IconButton(
+            onPressed: () {_showFormSorting();},
+            icon: const Icon(Icons.sort)
+        ),
+      ],
     );
+  }
+
+  void _showFormSorting() {
+    showModalBottomSheet(
+      isScrollControlled: true,
+      context: context,
+      elevation: 5,
+      backgroundColor: Colors.white,
+      isDismissible: false,
+      builder: (_) => StatefulBuilder(
+        builder: (BuildContext context, StateSetter setState) {
+          // Переменные состояния для радиокнопок и чекбоксов
+          //String selectedRadio = "от А до Я";  // начальное значение для radio buttons
+          //bool isCustomChecked = true;   // чекбокс "пользовательские" по умолчанию
+          //bool isBuiltInChecked = true;  // чекбокс "встроенные" по умолчанию
+
+          // Функция для вызова sortValidator и закрытия виджета
+          void onSelectionChanged() {
+            sortValidator();
+            Navigator.of(context).pop();  // Закрытие виджета с сохранением настроек
+          }
+
+          return Container(
+            padding: EdgeInsets.only(
+              top: 25,
+              left: 30,
+              right: 30,
+              bottom: 20,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Показать",
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 15),
+
+                // Радиокнопки для выбора сортировки
+                RadioListTile(
+                  title: Text("от А до Я"),
+                  value: "от А до Я",
+                  groupValue: selectedRadio,
+                  onChanged: (value) {
+                    setState(() => selectedRadio = value.toString());
+                    setState(() => _sortKey = "name");
+                    setState(() => _ascending = true);
+                    onSelectionChanged();
+                  },
+                ),
+                RadioListTile(
+                  title: Text("от Я до А"),
+                  value: "от Я до А",
+                  groupValue: selectedRadio,
+                  onChanged: (value) {
+                    setState(() => selectedRadio = value.toString());
+                    setState(() => _sortKey = "name");
+                    setState(() => _ascending = false);
+                    onSelectionChanged();
+                  },
+                ),
+                RadioListTile(
+                  title: Text("по возрастанию ХЕ"),
+                  value: "по возрастанию ХЕ",
+                  groupValue: selectedRadio,
+                  onChanged: (value) {
+                    setState(() => selectedRadio = value.toString());
+                    setState(() => _sortKey = "carbohydrates");
+                    setState(() => _ascending = true);
+                    onSelectionChanged();
+                  },
+                ),
+                RadioListTile(
+                  title: Text("по убыванию ХЕ"),
+                  value: "по убыванию ХЕ",
+                  groupValue: selectedRadio,
+                  onChanged: (value) {
+                    setState(() => selectedRadio = value.toString());
+                    setState(() => _sortKey = "carbohydrates");
+                    setState(() => _ascending = false);
+                    onSelectionChanged();
+                  },
+                ),
+                SizedBox(height: 10),
+
+                // Чекбоксы
+                CheckboxListTile(
+                  title: Text("пользовательские"),
+                  value: isCustomChecked,
+                  controlAffinity: ListTileControlAffinity.leading, // Значок перед текстом
+                  onChanged: (bool? value) {
+                    setState(() => isCustomChecked = value!);
+                    onSelectionChanged();
+                  },
+                ),
+                CheckboxListTile(
+                  title: Text("встроенные"),
+                  value: isBuiltInChecked,
+                  controlAffinity: ListTileControlAffinity.leading, // Значок перед текстом
+                  onChanged: (bool? value) {
+                    setState(() => isBuiltInChecked = value!);
+                    onSelectionChanged();
+                  },
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  // эта функция пока особо не нужна, но пусть будет, мб при рефакторинге пригодится
+  void sortValidator() {
+    //_sortKey = 'name';
+    //_ascending = true;
+    _refreshJournals();
   }
 
   ListView _dishBaseBody() {
@@ -157,8 +284,14 @@ class _DishBaseClassState extends State<DishBaseClass> {
   int idHelper = 0;
   List<Map<String, dynamic>> _journals = [];
   bool _isLoading = true;
+  String _sortKey = 'name'; // сортировка по ключу
+  bool _ascending = true; // сортировка по возрастанию/убыванию
+  bool isCustomChecked = true;   // чекбокс "пользовательские" по умолчанию
+  bool isBuiltInChecked = true;  // чекбокс "встроенные" по умолчанию
+  String selectedRadio = "от А до Я";  // начальное значение для radio buttons
+
   Future<void> _refreshJournals() async {
-    final data = await SQLhelper().getDishItem();
+    final data = await SQLhelper().getDishItem(_sortKey, _ascending, isCustomChecked, isBuiltInChecked);
     setState(() {
       if(data != null)
       {
