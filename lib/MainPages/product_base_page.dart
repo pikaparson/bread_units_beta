@@ -151,7 +151,7 @@ class _ProductBaseClassState extends State<ProductBaseClass> {
     );
   }
 
-  // вот тут сделать switch case
+  // эта функция пока особо не нужна, но пусть будет, мб при рефакторинге пригодится
   void sortValidator() {
     //_sortKey = 'name';
     //_ascending = true;
@@ -354,7 +354,7 @@ class _ProductBaseClassState extends State<ProductBaseClass> {
 
 
   Future<void> _refreshJournals() async {
-    final data = await SQLhelper().getProductItem(_sortKey, _ascending);
+    final data = await SQLhelper().getProductItem(_sortKey, _ascending, isCustomChecked, isBuiltInChecked);
     setState(() {
       if (data != null) _journals = data;
       _isLoading = false;

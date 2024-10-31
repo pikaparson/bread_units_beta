@@ -434,9 +434,10 @@ class SQLhelper {
   //   final Database? db = await database;
   //   return db!.query('products', orderBy: 'id');
   // }
-  Future<List<Map<String, dynamic>>?> getProductItem([String sortKey = 'id', bool ascending = true]) async {
+  Future<List<Map<String, dynamic>>?> getProductItem([String sortKey = 'id', bool ascending = true, bool isCustom = true, bool isBuiltIn = true]) async {
     final Database? db = await database;
     String orderByClause;
+    String whereCustomerOrBuiltIn;
 
     switch (sortKey) {
       case 'name':
@@ -449,17 +450,27 @@ class SQLhelper {
         orderByClause = 'carbohydrates ${ascending ? 'ASC' : 'DESC'}';
         break;
 
-      case 'customFirst':
-      // Сначала пользовательские продукты, затем встроенные
-        orderByClause = 'main ${ascending ? 'ASC' : 'DESC'}, createdAt ASC';
-        break;
+      // case 'customOnly':
+      // // Только пользовательские продукты
+      //   orderByClause = 'main ${ascending ? 'ASC' : 'DESC'}, createdAt ASC';
+      //   break;
 
       default:
       // По умолчанию - по id
         orderByClause = 'id';
     }
 
-    return db!.query('products', orderBy: orderByClause);
+    if (isCustom == true && isBuiltIn == false) {
+      whereCustomerOrBuiltIn = 'WHERE main = 0';
+    }
+   else if (isCustom == false && isBuiltIn == true) {
+      whereCustomerOrBuiltIn = 'WHERE main = 1';
+    }
+   else {
+      whereCustomerOrBuiltIn = '';
+    }
+
+    return db!.query('products $whereCustomerOrBuiltIn', orderBy: orderByClause);
   }
   Future<List<Map<String, dynamic>>?> getProductItemOrderName() async {
     final Database? db = await database;
