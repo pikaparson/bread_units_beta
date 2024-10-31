@@ -25,24 +25,136 @@ class _ProductBaseClassState extends State<ProductBaseClass> {
 
   AppBar _productBaseAppBar() {
     return AppBar(
-      title: Text('База продуктов'),
+      title: const Text('База продуктов'),
       centerTitle: true,
       backgroundColor: Colors.blueAccent[100],
       actions: [
         IconButton(
-            onPressed: () {appBarSort();},
-            icon: Icon(Icons.sort)
+            onPressed: () {_showFormSorting();},
+            icon: const Icon(Icons.sort)
         ),
       ],
     );
   }
 
-  void appBarSort() {
-    // setState(() {
-    //   _journals = SQLhelper().getProductItem(_sortKey = 'name', _ascending = true);
-    // });
-    _sortKey = 'name';
-    _ascending = true;
+  void _showFormSorting() {
+    showModalBottomSheet(
+      isScrollControlled: true,
+      context: context,
+      elevation: 5,
+      backgroundColor: Colors.white,
+      isDismissible: false,
+      builder: (_) => StatefulBuilder(
+        builder: (BuildContext context, StateSetter setState) {
+          // Переменные состояния для радиокнопок и чекбоксов
+          //String selectedRadio = "от А до Я";  // начальное значение для radio buttons
+          //bool isCustomChecked = true;   // чекбокс "пользовательские" по умолчанию
+          //bool isBuiltInChecked = true;  // чекбокс "встроенные" по умолчанию
+
+          // Функция для вызова sortValidator и закрытия виджета
+          void onSelectionChanged() {
+            sortValidator();
+            Navigator.of(context).pop();  // Закрытие виджета с сохранением настроек
+          }
+
+          return Container(
+            padding: EdgeInsets.only(
+              top: 25,
+              left: 30,
+              right: 30,
+              bottom: 20,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Показать",
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 15),
+
+                // Радиокнопки для выбора сортировки
+                RadioListTile(
+                  title: Text("от А до Я"),
+                  value: "от А до Я",
+                  groupValue: selectedRadio,
+                  onChanged: (value) {
+                    setState(() => selectedRadio = value.toString());
+                    setState(() => _sortKey = "name");
+                    setState(() => _ascending = true);
+                    onSelectionChanged();
+                  },
+                ),
+                RadioListTile(
+                  title: Text("от Я до А"),
+                  value: "от Я до А",
+                  groupValue: selectedRadio,
+                  onChanged: (value) {
+                    setState(() => selectedRadio = value.toString());
+                    setState(() => _sortKey = "name");
+                    setState(() => _ascending = false);
+                    onSelectionChanged();
+                  },
+                ),
+                RadioListTile(
+                  title: Text("по возрастанию ХЕ"),
+                  value: "по возрастанию ХЕ",
+                  groupValue: selectedRadio,
+                  onChanged: (value) {
+                    setState(() => selectedRadio = value.toString());
+                    setState(() => _sortKey = "carbohydrates");
+                    setState(() => _ascending = true);
+                    onSelectionChanged();
+                  },
+                ),
+                RadioListTile(
+                  title: Text("по убыванию ХЕ"),
+                  value: "по убыванию ХЕ",
+                  groupValue: selectedRadio,
+                  onChanged: (value) {
+                    setState(() => selectedRadio = value.toString());
+                    setState(() => _sortKey = "carbohydrates");
+                    setState(() => _ascending = false);
+                    onSelectionChanged();
+                  },
+                ),
+                SizedBox(height: 10),
+
+                // Чекбоксы
+                CheckboxListTile(
+                  title: Text("пользовательские"),
+                  value: isCustomChecked,
+                  controlAffinity: ListTileControlAffinity.leading, // Значок перед текстом
+                  onChanged: (bool? value) {
+                    setState(() => isCustomChecked = value!);
+                    onSelectionChanged();
+                  },
+                ),
+                CheckboxListTile(
+                  title: Text("встроенные"),
+                  value: isBuiltInChecked,
+                  controlAffinity: ListTileControlAffinity.leading, // Значок перед текстом
+                  onChanged: (bool? value) {
+                    setState(() => isBuiltInChecked = value!);
+                    onSelectionChanged();
+                  },
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  // вот тут сделать switch case
+  void sortValidator() {
+    //_sortKey = 'name';
+    //_ascending = true;
     _refreshJournals();
   }
 
@@ -75,6 +187,52 @@ class _ProductBaseClassState extends State<ProductBaseClass> {
             )
     );
   }
+
+  // void _showFormChoiceSort() {
+  //   showModalBottomSheet(
+  //       isScrollControlled: true,
+  //       context: context,
+  //       elevation: 5,
+  //       backgroundColor: Colors.white,
+  //       isDismissible: false,
+  //       builder: (_) => Container(
+  //           padding: EdgeInsets.only(
+  //               top: 25,
+  //               left: 75,
+  //               right: 75,
+  //               bottom: 200
+  //           ),
+  //           child: Column(
+  //             mainAxisSize: MainAxisSize.min,
+  //             crossAxisAlignment: CrossAxisAlignment.center,
+  //             children: [
+  //               ElevatedButton(
+  //                   onPressed: () {
+  //                     Navigator.of(context).pop();
+  //                     _showFormAddProduct(time);
+  //                   },
+  //                   child: Text("Добавить продукт", style: TextStyle(color: Colors.black, fontSize: 14),)
+  //               ),
+  //               SizedBox(height: 10,),
+  //               ElevatedButton(
+  //                   onPressed: () {
+  //                     Navigator.of(context).pop();
+  //                     _showFormAddDish(time);
+  //                   },
+  //                   child: Text("Добавить свое блюдо", style: TextStyle(color: Colors.black, fontSize: 14))
+  //               ),
+  //               SizedBox(height: 10,),
+  //               ElevatedButton(
+  //                   onPressed: () {
+  //                     Navigator.of(context).pop();
+  //                   },
+  //                   child: Text("Отмена",style: TextStyle(color: Colors.black, fontSize: 14))
+  //               ),
+  //             ],
+  //           )
+  //       )
+  //   );
+  // }
 
   Widget returnDeleteIcon(int help, int index) {
     if(help != 1) {
@@ -188,8 +346,12 @@ class _ProductBaseClassState extends State<ProductBaseClass> {
 
   List<Map<String, dynamic>> _journals = [];
   bool _isLoading = true;
-  String _sortKey = 'id'; // сортировка по ключу
+  String _sortKey = 'name'; // сортировка по ключу
   bool _ascending = true; // сортировка по возрастанию/убыванию
+  bool isCustomChecked = true;   // чекбокс "пользовательские" по умолчанию
+  bool isBuiltInChecked = true;  // чекбокс "встроенные" по умолчанию
+  String selectedRadio = "от А до Я";  // начальное значение для radio buttons
+
 
   Future<void> _refreshJournals() async {
     final data = await SQLhelper().getProductItem(_sortKey, _ascending);
