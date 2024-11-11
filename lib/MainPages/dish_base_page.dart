@@ -72,15 +72,24 @@ class _DishBaseClassState extends State<DishBaseClass> {
     );
   }
 
-  FloatingActionButton _dishBaseFloatingActionButton() {
-    return FloatingActionButton(
-      onPressed: () {
-        setState(() {
-          _showForm(null);
-        });
-      },
-      child: Icon(Icons.add),
-      backgroundColor: Colors.blueAccent[100],
+ Widget _dishBaseFloatingActionButton() {
+    return Stack(
+      children: <Widget>[
+        // Другие виджеты вашего интерфейса
+        Positioned(
+          right: 15, // Установите отступ от правого края
+          bottom: 45, // Установите отступ от нижнего края
+          child: FloatingActionButton(
+            onPressed: () {
+              setState(() {
+                _showForm(null);
+              });
+            },
+            backgroundColor: Colors.blueAccent[100],
+            child: const Icon(Icons.add),
+          ),
+        ),
+      ],
     );
   }
 
