@@ -475,8 +475,8 @@ class _MainPageClassState extends State<MainPageClass> {
         builder: (_) => Container(
              padding: EdgeInsets.only(
                top: 25,
-               left: 75,
-               right: 75,
+               left: 110,
+               right: 110,
                bottom: 200
              ),
             child: Column(

@@ -21,8 +21,7 @@ class SQLhelper {
   Future<Database?> db() async {
     final Directory dir = await getApplicationDocumentsDirectory(); //path_provider.dart
     final String path = '${dir.path}/db.sqlite';
-    return await openDatabase(
-        path, version: 1, onCreate: (Database database, int version) async {
+    return await openDatabase(path, version: 1, onCreate: (Database database, int version) async {
       await database.execute("""CREATE TABLE products(
         id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
         name TEXT NOT NULL,
