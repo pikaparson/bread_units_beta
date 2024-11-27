@@ -122,7 +122,7 @@ class _DishBaseClassState extends State<DishBaseClass> {
                   },
                 ),
                 SizedBox(height: 10),
-
+/*
                 // Чекбоксы
                 CheckboxListTile(
                   title: Text("пользовательские"),
@@ -142,6 +142,7 @@ class _DishBaseClassState extends State<DishBaseClass> {
                     onSelectionChanged();
                   },
                 ),
+          */
               ],
             ),
           );
