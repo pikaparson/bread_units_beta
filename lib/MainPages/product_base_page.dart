@@ -16,11 +16,14 @@ class _ProductBaseClassState extends State<ProductBaseClass> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: _productBaseAppBar(),
-      body: _productBaseBody(),
-      floatingActionButton: _productBaseFloatingActionButton(),
-      drawer: _productBaseDrawer(),
+    return PopScope(
+        canPop: false,
+        child: Scaffold(
+          appBar: _productBaseAppBar(),
+          body: _productBaseBody(),
+          floatingActionButton: _productBaseFloatingActionButton(),
+          drawer: _productBaseDrawer(),
+        ),
     );
   }
 

@@ -20,10 +20,13 @@ class _MainPageClassState extends State<MainPageClass> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: _mainPageAppBar(),
-      body: _mainPageBody(),
-      drawer: _mainPageDrawer(),
+    return PopScope(
+        canPop: false,
+        child: Scaffold(
+          appBar: _mainPageAppBar(),
+          body: _mainPageBody(),
+          drawer: _mainPageDrawer(),
+        ),
     );
   }
 

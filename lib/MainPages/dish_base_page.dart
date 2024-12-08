@@ -14,11 +14,14 @@ class _DishBaseClassState extends State<DishBaseClass> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: _dishBaseAppBar(),
-      body: _dishBaseBody(),
-      drawer: _dishBaseDrawer(),
-      floatingActionButton: _dishBaseFloatingActionButton(),
+    return PopScope(
+        canPop: false,
+        child: Scaffold(
+          appBar: _dishBaseAppBar(),
+          body: _dishBaseBody(),
+          drawer: _dishBaseDrawer(),
+          floatingActionButton: _dishBaseFloatingActionButton(),
+        ),
     );
   }
 
