@@ -30,45 +30,88 @@ class _DishBaseClassState extends State<DishBaseClass> {
     );
   }
 
-  ListView _dishBaseBody() {
-    return ListView.builder(
-        itemCount: _journals.length,
-        itemBuilder: (context, index) => Card (
-          color: Colors.grey[100],
-          margin: const EdgeInsets.all(15),
-          child: ListTile(
-            title: Text('${_journals[index]['name']}'),
-            subtitle: FutureBuilder<double>(
-                future: SQLhelper().calculateBu(int.parse(_journals[index]['id'].toString())),
-                builder: (context, snapshot) {
-                  return Text('${snapshot.data?.toStringAsFixed(2)} ХЕ на 100 грамм');
-                }
+  void _filterSearchResults(String query) {
+    if (query.isNotEmpty) {
+      List<Map<String, dynamic>> dummySearchList = List.from(_journals);
+      List<Map<String, dynamic>> dummyListData = [];
+      for (var item in dummySearchList) {
+        if (item["name"].toLowerCase().contains(query.toLowerCase())) {
+          dummyListData.add(item);
+        }
+      }
+      setState(() {
+        filteredItems.clear(); // Можно оставить
+        filteredItems.addAll(dummyListData); // Или присвоить новое значение
+      });
+      return;
+    } else {
+      setState(() {
+        filteredItems = List.from(_journals); // Убедитесь, что _journals изменяемо
+      });
+    }
+  }
+
+  List<Map<String, dynamic>> filteredItems = [];
+
+  Widget _dishBaseBody() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        children: [
+          TextField(
+            onChanged: (value) => _filterSearchResults(value),
+            decoration: const InputDecoration(
+              hintText: "Поиск блюда по названию",
+              prefixIcon: Icon(Icons.search),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(10.0)),
+              ),
             ),
-            trailing: SizedBox(
-                width: 100,
-                child: Row(
-                  children: [
-                    IconButton(
-                        onPressed: () {
-                          setState(() {
-                            _showForm(_journals[index]['id']);
-                          });
-                        },
-                        icon: const Icon(Icons.edit)
+          ),
+          const SizedBox(height: 10),
+          Expanded( // Используем Expanded здесь
+            child: ListView.builder(
+                itemCount: filteredItems.length,
+                itemBuilder: (context, index) => Card (
+                  color: Colors.grey[100],
+                  margin: const EdgeInsets.all(15),
+                  child: ListTile(
+                    title: Text('${filteredItems[index]['name']}'),
+                    subtitle: FutureBuilder<double>(
+                        future: SQLhelper().calculateBu(int.parse(filteredItems[index]['id'].toString())),
+                        builder: (context, snapshot) {
+                          return Text('${snapshot.data?.toStringAsFixed(2)} ХЕ на 100 грамм');
+                        }
                     ),
-                    IconButton(
-                        onPressed: () {
-                          setState(() {
-                            _deleteItem(_journals[index]['id']);
-                          });
-                        },
-                        icon: const Icon(Icons.delete)
+                    trailing: SizedBox(
+                        width: 100,
+                        child: Row(
+                          children: [
+                            IconButton(
+                                onPressed: () {
+                                  setState(() {
+                                    _showForm(filteredItems[index]['id']);
+                                  });
+                                },
+                                icon: const Icon(Icons.edit)
+                            ),
+                            IconButton(
+                                onPressed: () {
+                                  setState(() {
+                                    _deleteItem(filteredItems[index]['id']);
+                                  });
+                                },
+                                icon: const Icon(Icons.delete)
+                            ),
+                          ],
+                        )
                     ),
-                  ],
+                  ),
                 )
             ),
           ),
-        )
+        ],
+      ),
     );
   }
 
@@ -165,6 +208,7 @@ class _DishBaseClassState extends State<DishBaseClass> {
       if(data != null)
       {
         _journals = data;
+        filteredItems = List<Map<String, dynamic>>.from(_journals);
       }
       _isLoading = false;
     });
