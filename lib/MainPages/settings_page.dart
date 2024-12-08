@@ -10,10 +10,13 @@ class SettingsClass extends StatefulWidget {
 class _SettingsClassState extends State<SettingsClass> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: _settingsAppBar(),
-      body: null,
-      drawer: _settingsDrawer(),
+    return PopScope(
+        canPop: false,
+        child: Scaffold(
+          appBar: _settingsAppBar(),
+          body: null,
+          drawer: _settingsDrawer(),
+        ),
     );
   }
 

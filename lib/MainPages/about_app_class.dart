@@ -10,10 +10,13 @@ class AboutAppClass extends StatefulWidget {
 class _AboutAppClassState extends State<AboutAppClass> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: _aboutAppAppBar(),
-      body: _aboutAppBody(),
-      drawer: _aboutAppDrawer(),
+    return PopScope(
+        canPop: false,
+        child: Scaffold(
+          appBar: _aboutAppAppBar(),
+          body: _aboutAppBody(),
+          drawer: _aboutAppDrawer(),
+        ),
     );
   }
 

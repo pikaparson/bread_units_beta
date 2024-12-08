@@ -10,10 +10,13 @@ class HelpClass extends StatefulWidget {
 class _HelpClassState extends State<HelpClass> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: _helpAppBar(),
-      body: _helpBody(),
-      drawer: _helpDrawer(),
+    return PopScope(
+        canPop: false,
+        child: Scaffold(
+          appBar: _helpAppBar(),
+          body: _helpBody(),
+          drawer: _helpDrawer(),
+        ),
     );
   }
 
