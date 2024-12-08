@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../DataBase/data_base.dart';
+import 'package:searchfield/searchfield.dart';
 
 class ProductBaseClass extends StatefulWidget {
   const ProductBaseClass({super.key});
@@ -10,6 +11,8 @@ class ProductBaseClass extends StatefulWidget {
 }
 
 class _ProductBaseClassState extends State<ProductBaseClass> {
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -29,33 +32,74 @@ class _ProductBaseClassState extends State<ProductBaseClass> {
     );
   }
 
-  ListView _productBaseBody() {
-    return ListView.builder(
-        itemCount: _journals.length,
-        itemBuilder: (context, index) =>
-            Card(
-              color: Colors.grey[100],
-              margin: const EdgeInsets.all(15),
-              child: ListTile(
-                title: Text(
-                    '${_journals[index]['name']}\n${_journals[index]['carbohydrates']}г углеводов на 100г'),
-                subtitle: FutureBuilder<String>(
-                  future: SQLhelper().getProductBU(_journals[index]['id']),
-                  builder: (context, snapshot) {
-                    return Text('${snapshot.data}');
-                  },
-                ),
-                trailing: SizedBox(
-                    width: 100,
-                    child: Row(
-                      children: [
-                        returnEditIcon(_journals[index]['main'], index),
-                        returnDeleteIcon(_journals[index]['main'], index),
-                      ],
-                    )
+  void _filterSearchResults(String query) {
+    if (query.isNotEmpty) {
+      List<Map<String, dynamic>> dummySearchList = List.from(_journals);
+      List<Map<String, dynamic>> dummyListData = [];
+      for (var item in dummySearchList) {
+        if (item["name"].toLowerCase().contains(query.toLowerCase())) {
+          dummyListData.add(item);
+        }
+      }
+      setState(() {
+        filteredItems.clear(); // Можно оставить
+        filteredItems.addAll(dummyListData); // Или присвоить новое значение
+      });
+      return;
+    } else {
+      setState(() {
+        filteredItems = List.from(_journals); // Убедитесь, что _journals изменяемо
+      });
+    }
+  }
+
+  List<Map<String, dynamic>> filteredItems = [];
+
+  Widget _productBaseBody() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        children: [
+          TextField(
+            onChanged: (value) => _filterSearchResults(value),
+            decoration: const InputDecoration(
+              hintText: "Поиск продукта по названию",
+              prefixIcon: Icon(Icons.search),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(10.0)),
+              ),
+            ),
+          ),
+          const SizedBox(height: 10),
+          Expanded( // Используем Expanded здесь
+            child: ListView.builder(
+              itemCount: filteredItems.length,
+              itemBuilder: (context, index) => Card(
+                color: Colors.grey[100],
+                margin: const EdgeInsets.all(15),
+                child: ListTile(
+                  title: Text(
+                      '${filteredItems[index]['name']}\n${filteredItems[index]['carbohydrates']}г углеводов на 100г'),
+                  subtitle: FutureBuilder<String>(
+                    future: SQLhelper().getProductBU(filteredItems[index]['id']),
+                    builder: (context, snapshot) {
+                      return Text('${snapshot.data}');
+                    },
+                  ),
+                  trailing: SizedBox(
+                      width: 100,
+                      child: Row(
+                        children: [
+                          returnEditIcon(filteredItems[index]['main'], index),
+                          returnDeleteIcon(filteredItems[index]['main'], index),
+                        ],
+                      )),
                 ),
               ),
-            )
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -177,7 +221,10 @@ class _ProductBaseClassState extends State<ProductBaseClass> {
   Future<void> _refreshJournals() async {
     final data = await SQLhelper().getProductItem();
     setState(() {
-      if (data != null) _journals = data;
+      if (data != null) {
+        _journals = data; // Преобразуем QueryResultSet в список
+        filteredItems = List<Map<String, dynamic>>.from(_journals);
+      }
       _isLoading = false;
     });
   }

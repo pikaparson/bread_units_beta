@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'package:searchfield/searchfield.dart';
 import '../../DataBase/data_base.dart';
 
 class CompositionClass extends StatefulWidget {
@@ -181,7 +182,7 @@ class _CompositionClassState extends State<CompositionClass> {
               left: 15,
               right: 15,
               // это предотвратит закрытие текстовых полей программной клавиатурой
-              bottom: MediaQuery.of(context).viewInsets.bottom + 275,
+              bottom: MediaQuery.of(context).viewInsets.bottom + 180,
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -191,38 +192,37 @@ class _CompositionClassState extends State<CompositionClass> {
                   child: Text('Выберите продукт'),
                 ),
                 //выбор продукта
-                DropdownButtonFormField(
-                  decoration: const InputDecoration(
-                    labelText: 'Название блюда',
-                    labelStyle: TextStyle(color: Colors.black),
-                    hintText: 'Ввод названия блюда',
-                    hintStyle: TextStyle(color: Colors.black54),
-                    enabledBorder: OutlineInputBorder(
+                SearchField<Map<String, dynamic>>(
+                  hint: "Поиск по названию продукта",
+                  suggestions: _journalsProducts
+                      .map(
+                        (e) => SearchFieldListItem<Map<String, dynamic>>(e["name"], item: e, child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            children: [
+                              Text(e["name"]),
+                            ],
+                          ),
+                        ),),
+                  ).toList(),
+                  onSuggestionTap: (suggestion) {
+                    productId = suggestion.item?['id'];
+                    },
+                  searchInputDecoration: SearchInputDecoration(
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.blueAccent,
+                      ),
                       borderRadius: BorderRadius.all(
                           Radius.circular(4.0)),
+                    ),
+                    border: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.blueAccent),
+                      borderRadius: BorderRadius.all(
+                          Radius.circular(4.0)),
                     ),
                   ),
-                  disabledHint: productId != null //можно удалить
-                      ? Text(_journalsProducts.firstWhere((item) => item["id"] == productId)["name"])
-                      : null,
-                  isExpanded: false,
-                  value: productId,
-                  items: _journalsProducts.map<DropdownMenuItem<int>>((e) {
-                    return DropdownMenuItem
-                      (
-                      child: Text(
-                        e["name"],
-                      ),
-                      value: e["id"],
-                    );
-                  }).toList(),
-                  onChanged: (t) {
-                    setState(() {
-                      productId = t!;
-                      MediaQuery.of(context).viewInsets.bottom;
-                    });
-                  },
+                  maxSuggestionsInViewPort: 3,
                 ),
                 SizedBox(
                     height: 15,

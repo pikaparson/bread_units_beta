@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../DataBase/data_base.dart';
-
+import 'package:searchfield/searchfield.dart';
 import 'package:flutter_calendar_carousel/classes/event.dart';
 import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart' show CalendarCarousel;
 
@@ -584,6 +584,7 @@ class _MainPageClassState extends State<MainPageClass> {
   }
 
   final TextEditingController _gramsController = TextEditingController();
+
   void _showFormAddProduct(int time) {
     int productId = 0;
     showModalBottomSheet(
@@ -605,38 +606,44 @@ class _MainPageClassState extends State<MainPageClass> {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 //выбор продукта
-                DropdownButtonFormField(
-                  decoration: const InputDecoration(
-                    labelText: 'Выберите продукт',
-                    labelStyle: TextStyle(color: Colors.black),
-                    hintStyle: TextStyle(color: Colors.black54),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(
-                          Radius.circular(4.0)),
-                      borderSide: BorderSide(color: Colors.blueAccent),
-                    ),
-                  ),
-                  disabledHint: productId != null //можно удалить
-                      ? Text(_journalsProducts.firstWhere((item) => item["id"] == productId)["name"])
-                      : null,
-                  isExpanded: false,
-                  value: productId,
-                  items: _journalsProducts.map<DropdownMenuItem<int>>((e) {
-                    return DropdownMenuItem
-                      (
-                      child: Text(
-                        e["name"],
+                SearchField<Map<String, dynamic>>(
+                  hint: "Поиск по названию продукта",
+                  suggestions: _journalsProducts
+                      .map(
+                        (e) => SearchFieldListItem<Map<String, dynamic>>(
+                      e["name"],
+                      item: e,
+
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          children: [
+                            Text(e["name"]),
+                          ],
+                        ),
                       ),
-                      value: e["id"],
-                    );
-                  }).toList(),
-                  onChanged: (t) {
-                    setState(() {
-                      productId = t!;
-                      MediaQuery.of(context).viewInsets.bottom;
-                    });
+                    ),
+                  ).toList(),
+                  onSuggestionTap: (suggestion) {
+                    productId = suggestion.item?['id'];
                   },
+                    searchInputDecoration: SearchInputDecoration(
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.blueAccent,
+                        ),
+                        borderRadius: BorderRadius.all(
+                            Radius.circular(4.0)),
+                      ),
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.blueAccent),
+                        borderRadius: BorderRadius.all(
+                            Radius.circular(4.0)),
+                      ),
+                    ),
+                    maxSuggestionsInViewPort: 3,
                 ),
+
                 SizedBox(height: 15,),
                 // ввод граммов
                 TextField(
@@ -680,6 +687,7 @@ class _MainPageClassState extends State<MainPageClass> {
         )
     );
   }
+
   void _showFormAddDish(int time) {
     if (_journalsDish.isEmpty) {
       Widget okButton = ElevatedButton(
@@ -724,39 +732,46 @@ class _MainPageClassState extends State<MainPageClass> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  //выбор продукта
-                  DropdownButtonFormField(
-                    decoration: const InputDecoration(
-                      labelText: 'Выберите блюдо',
-                      labelStyle: TextStyle(color: Colors.black),
-                      hintStyle: TextStyle(color: Colors.black54),
-                      enabledBorder: OutlineInputBorder(
+                  SearchField<Map<String, dynamic>>(
+                    hint: "Поиск по названию блюда",
+                    suggestions: _journalsDish
+                        .map(
+                          (e) => SearchFieldListItem<Map<String, dynamic>>(
+                        e["name"],
+                        item: e,
+
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            children: [
+                              Text(e["name"]),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ).toList(),
+                    onSuggestionTap: (suggestion) {
+                      dishId = suggestion.item?['id'];
+                    },
+                    searchInputDecoration: SearchInputDecoration(
+                      focusedBorder: const OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.blueAccent,
+                        ),
                         borderRadius: BorderRadius.all(
                             Radius.circular(4.0)),
+                      ),
+                      border: const OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.blueAccent),
+                        borderRadius: BorderRadius.all(
+                            Radius.circular(4.0)),
                       ),
                     ),
-                    isExpanded: false,
-                    value: dishId,
-                    items: _journalsDish.map<DropdownMenuItem<int>>((e) {
-                      return DropdownMenuItem
-                        (
-                        child: Text(
-                          e["name"],
-                        ),
-                        value: e["id"],
-                      );
-                    }).toList(),
-                    onChanged: (t) {
-                      setState(() {
-                        dishId = t!;
-                        MediaQuery.of(context).viewInsets.bottom;
-                      });
-                    },
+                    maxSuggestionsInViewPort: 3,
                   ),
-                  SizedBox(height: 15,),
+                  const SizedBox(height: 15,),
                   // ввод граммов
-                  SizedBox(height: 15,),
+                  const SizedBox(height: 15,),
                   // ввод граммов
                   TextField(
                     controller: _gramsController,
@@ -779,14 +794,14 @@ class _MainPageClassState extends State<MainPageClass> {
                   ),
                   ElevatedButton(
                     onPressed: () async {
-                      _addItem(dishId, null, int.parse("${_gramsController.text}"), time);
+                      _addItem(dishId, null, int.parse(_gramsController.text), time);
                       _gramsController.text = '';
                       await _refreshJournals();
                       // Закрываем шторку
                       if (!mounted) return;
                       Navigator.of(context).pop();
                     },
-                    child: Text('Добавить', style: TextStyle(color: Colors.black)),
+                    child: const Text('Добавить', style: TextStyle(color: Colors.black)),
                   ),
                   const SizedBox(
                     height: 5,
@@ -795,7 +810,7 @@ class _MainPageClassState extends State<MainPageClass> {
                       onPressed: () {
                         Navigator.of(context).pop();
                       },
-                      child: Text('Отмена', style: TextStyle(color: Colors.black),))
+                      child: const Text('Отмена', style: TextStyle(color: Colors.black),))
                 ],
               )
           )
