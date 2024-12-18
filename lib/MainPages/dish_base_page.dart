@@ -250,7 +250,7 @@ class _DishBaseClassState extends State<DishBaseClass> {
               left: 15,
               right: 15,
               // это предотвратит закрытие текстовых полей программной клавиатурой
-              bottom: MediaQuery.of(context).viewInsets.bottom + 275,
+              bottom: MediaQuery.of(context).viewInsets.bottom + 100,
             ),
             child: Form(
               key: _key,
