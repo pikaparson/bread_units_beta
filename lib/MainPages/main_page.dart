@@ -36,20 +36,22 @@ class _MainPageClassState extends State<MainPageClass> {
       centerTitle: true,
       backgroundColor: Colors.blueAccent[100],
       actions: [
-        IconButton.filled(
-            onPressed: (){
-              setState(() {
-                _isCalendarVisible = !_isCalendarVisible;
-              });
-            },
-            icon: Icon(Icons.calendar_month),
-            isSelected: _isCalendarVisible,
+        IconButton(
+          onPressed: () {
+            setState(() {
+              _isCalendarVisible = !_isCalendarVisible;
+            });
+          },
+          icon: Icon(
+            Icons.calendar_month,
+            color: _isCalendarVisible ? Colors.white : Colors.black,
+
+          ),
         ),
         IconButton(
-            onPressed: () {appBarTime();},
-            icon: Icon(Icons.add)
+          onPressed: () {appBarTime();},
+          icon: Icon(Icons.add, color: Colors.black,),
         ),
-
       ],
     );
   }
@@ -144,16 +146,16 @@ class _MainPageClassState extends State<MainPageClass> {
           setState(() => _selectedDate = date);
           await _refreshJournals();
         },
+        todayBorderColor: Colors.white,
+        todayButtonColor: Colors.white,
+        selectedDayBorderColor: Colors.white,
+        selectedDayButtonColor: Colors.white,
         weekendTextStyle: TextStyle(
           color: Colors.red,
         ),
         thisMonthDayBorderColor: Colors.blue,
         selectedDateTime: _selectedDate,
-//      weekDays: null, /// for pass null when you do not want to render weekDays
-//      headerText: Container( /// Example for rendering custom header
-//        child: Text('Custom Header'),
-//      ),
-        customDayBuilder: (   /// you can provide your own build function to make custom day containers
+        customDayBuilder: (
             bool isSelectable,
             int index,
             bool isSelectedDay,
@@ -164,16 +166,39 @@ class _MainPageClassState extends State<MainPageClass> {
             bool isThisMonthDay,
             DateTime day,
             ) {
-          /// If you return null, [CalendarCarousel] will build container for current [day] with default function.
-          /// This way you can build custom containers for specific days only, leaving rest as default.
+          if (isSelectedDay) {
+            return Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.blueAccent[100],  // цвет заливки выбранного дня
+              ),
+              child: Center(
+                child: Text(
+                  day.day.toString(),
+                  style: textStyle,
+                ),
+              ),
+            );
+          } else if (isToday) {
+            return Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.pinkAccent[100],  // цвет заливки сегодняшнего дня
+              ),
+              child: Center(
+                child: Text(
+                  day.day.toString(),
+                  style: textStyle,
+                ),
+              ),
+            );
+          }
+          return null;  // использовать стиль по умолчанию для остальных дней
         },
         weekFormat: false,
-        //markedDatesMap: _markedDateMap,
         height: 430.0,
-        //selectedDateTime: _currentDate,
-        daysHaveCircularBorder: true, /// null for not rendering any border, true for circular border, false for rectangular border
+        daysHaveCircularBorder: true,
         locale: 'ru',
-        //the lines under-- are not working, the calendar still 'shmaaaks' and 'blooobs' when try to scroll
         isScrollable: false,
         pageScrollPhysics: const NeverScrollableScrollPhysics(),
       ),
