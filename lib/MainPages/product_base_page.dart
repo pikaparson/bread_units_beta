@@ -253,7 +253,6 @@ class _ProductBaseClassState extends State<ProductBaseClass> {
     showModalBottomSheet(
         context: context,
         elevation: 5,
-        //тень
         isScrollControlled: true,
         backgroundColor: Colors.white,
         isDismissible: false,
@@ -262,7 +261,7 @@ class _ProductBaseClassState extends State<ProductBaseClass> {
             top: 15,
             left: 15,
             right: 15,
-            bottom: MediaQuery.of(context).viewInsets.bottom + 275,
+            bottom: MediaQuery.of(context).viewInsets.bottom + 100,
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,

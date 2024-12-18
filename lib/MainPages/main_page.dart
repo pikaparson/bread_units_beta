@@ -73,7 +73,6 @@ class _MainPageClassState extends State<MainPageClass> {
     }
   }
 
-
   Drawer _mainPageDrawer() {
     return Drawer(
       child: ListView(
@@ -466,7 +465,6 @@ class _MainPageClassState extends State<MainPageClass> {
       },
     );
   }
-
 
   void _showFormChoiceAdd(int time) {
     showModalBottomSheet(
@@ -1071,7 +1069,37 @@ class _MainPageClassState extends State<MainPageClass> {
 
   void _showFormEdit(int id, int time) async {
     String name = '';
-    final existingJournal = _journalsBreakfast.firstWhere((element) => element['id'] == id);
+
+    List<Map<String, dynamic>> currentList;
+
+    switch (time) {
+      case 0:
+        currentList = _journalsBreakfast;
+        break;
+      case 1:
+        currentList = _journalsLateBreakfast;
+        break;
+      case 2:
+        currentList = _journalsLunch;
+        break;
+      case 3:
+        currentList = _journalsLateLunch;
+        break;
+      case 4:
+        currentList = _journalsDinner;
+        break;
+      case 5:
+        currentList = _journalsLateDinner;
+        break;
+      default:
+        return; // если не подошло, выход из метода
+    }
+
+    final existingJournal = currentList.firstWhere(
+          (element) => element['id'] == id,
+    );
+
+   // final existingJournal = _journalsBreakfast.firstWhere((element) => element['id'] == id);
     _gramsController.text = "${existingJournal['grams']}";
     name = existingJournal['name'];
 
