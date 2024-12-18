@@ -238,6 +238,9 @@ class _DishBaseClassState extends State<DishBaseClass> {
       final existingJournal = _journals.firstWhere((element) => element['id'] == id);
       _nameController.text = existingJournal['name'];
     }
+
+    String oldName = _nameController.text;
+
     showModalBottomSheet(
         isScrollControlled: true,
         context: context,
@@ -277,7 +280,7 @@ class _DishBaseClassState extends State<DishBaseClass> {
                         if (value != null && value.contains('\$')) {
                           return 'Название блюда содержит запрещенный знак \$';
                         }
-                        if (_hasName(value!)) {
+                        if (_hasName(value!) && value != oldName) {
                           return 'Блюдо с таким именем уже существует';
                         }
                       },

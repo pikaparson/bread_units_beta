@@ -274,8 +274,6 @@ class _ProductBaseClassState extends State<ProductBaseClass> {
                 decoration: const InputDecoration(
                   labelText: 'Название продукта',
                   labelStyle: TextStyle(color: Colors.black),
-                  hintText: 'Ввод названия продукта',
-                  hintStyle: TextStyle(color: Colors.black54),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.all(
                         Radius.circular(4.0)),
@@ -299,8 +297,6 @@ class _ProductBaseClassState extends State<ProductBaseClass> {
                 decoration: const InputDecoration(
                   labelText: 'Количество углеводов',
                   labelStyle: TextStyle(color: Colors.black),
-                  hintText: 'Ввод количества углеводов',
-                  hintStyle: TextStyle(color: Colors.black54),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.all(
                         Radius.circular(4.0)),
