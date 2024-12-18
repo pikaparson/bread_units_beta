@@ -354,7 +354,7 @@ class _ProductBaseClassState extends State<ProductBaseClass> {
                   }
                 },
                 child: Text(
-                    'Добавить', style: TextStyle(color: Colors.black)),
+                    'Ок', style: TextStyle(color: Colors.black)),
               ),
               const SizedBox(
                 height: 5,
