@@ -180,6 +180,16 @@ class _MainPageClassState extends State<MainPageClass> {
     );
   }
 
+  Widget _buSum() {
+    return Container(
+      child: Center(
+        child:
+            Text("$BUsum ХЕ", style: TextStyle(fontSize: 46),
+        ),
+      ),
+    );
+  }
+
   Widget _mainPageBody() {
     return SingleChildScrollView(
       child: Column(
@@ -188,7 +198,9 @@ class _MainPageClassState extends State<MainPageClass> {
         children: [
           if(_isCalendarVisible)
             _calendar(),
-          SizedBox(height: 15,),
+          SizedBox(height: 5,),
+          _buSum(),
+          SizedBox(height: 5,),
           _mainPageBreakfast(),
           SizedBox(height: 5,),
           _mainPageCardsBreakfast(),
@@ -525,7 +537,8 @@ class _MainPageClassState extends State<MainPageClass> {
         BUlunch = '',
         BULlunch = '',
         BUdinner = '',
-        BULdinner = '';
+        BULdinner = '',
+        BUsum = '';
   bool _isLoading = true;
   Future<void> _refreshJournals() async {
     BUbreakfast = await SQLhelper().returnBUSumma(0, _selectedDate);
@@ -534,6 +547,7 @@ class _MainPageClassState extends State<MainPageClass> {
     BULlunch = await SQLhelper().returnBUSumma(3, _selectedDate);
     BUdinner = await SQLhelper().returnBUSumma(4, _selectedDate);
     BULdinner = await SQLhelper().returnBUSumma(5, _selectedDate);
+    BUsum = "${double.parse(BUbreakfast) + double.parse(BULbreakfast) + double.parse(BUlunch) + double.parse(BULlunch) +double.parse(BUdinner) + double.parse(BULdinner)}";
 
     final dataLateDinner = await SQLhelper().getLateDinnerItem(_selectedDate);
     final dataDinner = await SQLhelper().getDinnerItem(_selectedDate);
@@ -819,7 +833,6 @@ class _MainPageClassState extends State<MainPageClass> {
     }
   }
 
-
   Widget _mainPageCardsBreakfast() {
     return SizedBox(
       height: _journalsBreakfast.length * 82,
@@ -1066,7 +1079,6 @@ class _MainPageClassState extends State<MainPageClass> {
     );
   }
 
-
   void _showFormEdit(int id, int time) async {
     String name = '';
 
@@ -1171,7 +1183,6 @@ class _MainPageClassState extends State<MainPageClass> {
         )
     );
   }
-
   //Вставить новый объект в базу данных
   Future<void> _addItem(int? idDish, int? idProduct, int grams, int time) async {
     await SQLhelper().createTimeItem(idDish, idProduct, grams, time, _selectedDate);
