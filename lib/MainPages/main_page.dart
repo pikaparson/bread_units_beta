@@ -17,6 +17,7 @@ class _MainPageClassState extends State<MainPageClass> {
 
   DateTime _selectedDate = DateTime.now();
   bool _isCalendarVisible = false;
+  String productBU = "";
 
   @override
   Widget build(BuildContext context) {
@@ -700,6 +701,20 @@ class _MainPageClassState extends State<MainPageClass> {
                     focusColor: Colors.blueAccent,
                   ),
                 ),
+                //Text("ХЕ: " + _getBu(productId, int.parse("${_gramsController.text}")).toString(), style: TextStyle(color: Colors.black)),
+                FutureBuilder<String>(
+                  future: _formatBU(_gramsController.text, productId), // async work
+                  builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+                    switch (snapshot.connectionState) {
+                      case ConnectionState.waiting: return Text('Loading....');
+                      default:
+                        if (snapshot.hasError)
+                          return Text('Error: ${snapshot.error}');
+                        else
+                          return Text('Result: ${snapshot.data}');
+                    }
+                  },
+                ),
                 const SizedBox(
                   height: 15,
                 ),
@@ -726,6 +741,13 @@ class _MainPageClassState extends State<MainPageClass> {
             )
         )
     );
+  }
+
+  Future<String> _formatBU(String grams, int productId) async {
+    if (grams == "") {
+      return "";
+    }
+    return "${await _getBu(productId, int.parse("${grams}"))}";
   }
 
   void _showFormAddDish(int time) {
@@ -1208,6 +1230,13 @@ class _MainPageClassState extends State<MainPageClass> {
         )
     );
   }
+  //Узнать углеводы на определенное количество грамм продукта из БД
+  Future<double> _getBu(int idProduct, int grams) async {
+    var str = await SQLhelper().getProductClearBU(idProduct);
+    var bu = double.parse(str);
+    return Future.value((bu * grams) / 100);
+  }
+  
   //Вставить новый объект в базу данных
   Future<void> _addItem(int? idDish, int? idProduct, int grams, int time) async {
     await SQLhelper().createTimeItem(idDish, idProduct, grams, time, _selectedDate);
