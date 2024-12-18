@@ -111,7 +111,7 @@ class _ProductBaseClassState extends State<ProductBaseClass> {
       return IconButton(
           onPressed: () {
             setState(() {
-              _deleteItem(_journals[index]['id']);
+              _deleteItem(filteredItems[index]['id']);
             });
           },
           icon: const Icon(Icons.delete)
@@ -124,7 +124,7 @@ class _ProductBaseClassState extends State<ProductBaseClass> {
       return IconButton(
           onPressed: () {
             setState(() {
-              _showForm(_journals[index]['id']);
+              _showForm(filteredItems[index]['id']);
             });
           },
           icon: const Icon(Icons.edit)
