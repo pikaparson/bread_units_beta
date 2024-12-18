@@ -121,7 +121,7 @@ class _DishBaseClassState extends State<DishBaseClass> {
                     onSelectionChanged();
                   },
                 ),
-                SizedBox(height: 10),
+                /*SizedBox(height: 10),
 
                 // Чекбоксы
                 CheckboxListTile(
@@ -141,7 +141,7 @@ class _DishBaseClassState extends State<DishBaseClass> {
                     setState(() => isBuiltInChecked = value!);
                     onSelectionChanged();
                   },
-                ),
+                ),*/
               ],
             ),
           );
