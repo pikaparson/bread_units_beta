@@ -144,12 +144,14 @@ class SQLhelper {
   }
 
   //Вернуть углеводы продукта по id
+  /*
   Future<double> controlProductCarbs(int? id) async {
     final Database? db = await database;
     final help = await db!.rawQuery('SELECT *FROM dishes WHERE id = ?', [id]);
     double carbs = await double.parse(help[0]['carbohydrates'].toString());
     return carbs;
   }
+  */
 
 
   String castDateTime(DateTime dateTime)
@@ -490,7 +492,7 @@ class SQLhelper {
     return Future.value('');
   }
 
-  Future<String> getProductClearBU(int id) async {
+  /*Future<String> getProductClearBU(int id) async {
     final Database? db = await database;
     final helper = await db?.rawQuery('SELECT carbohydrates FROM products WHERE id = ?', [id]);
     if (helper != null) {
@@ -498,7 +500,7 @@ class SQLhelper {
     return '${helperDouble.toStringAsFixed(2)}';
     }
     return Future.value('');
-  }
+  }*/
 
   // DISH --- DISH --- DISH --- DISH --- DISH --- DISH --- DISH --- DISH --- DISH --- DISH --- DISH --- DISH --- DISH --- DISH --- DISH --- DISH --- DISH --- DISH --- DISH --- DISH --- DISH --- DISH
   // Создание нового объекта блюда
