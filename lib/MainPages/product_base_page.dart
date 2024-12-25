@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../DataBase/data_base.dart';
+import 'package:searchfield/searchfield.dart';
 
 class ProductBaseClass extends StatefulWidget {
   const ProductBaseClass({super.key});
@@ -11,15 +12,18 @@ class ProductBaseClass extends StatefulWidget {
 
 class _ProductBaseClassState extends State<ProductBaseClass> {
 
-  final _key = GlobalKey<FormState>();
+
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: _productBaseAppBar(),
-      body: _productBaseBody(),
-      floatingActionButton: _productBaseFloatingActionButton(),
-      drawer: _productBaseDrawer(),
+    return PopScope(
+        canPop: false,
+        child: Scaffold(
+          appBar: _productBaseAppBar(),
+          body: _productBaseBody(),
+          floatingActionButton: _productBaseFloatingActionButton(),
+          drawer: _productBaseDrawer(),
+        ),
     );
   }
 
@@ -36,6 +40,7 @@ class _ProductBaseClassState extends State<ProductBaseClass> {
       ],
     );
   }
+
 
   void _showFormSorting() {
     showModalBottomSheet(
@@ -158,7 +163,31 @@ class _ProductBaseClassState extends State<ProductBaseClass> {
     _refreshJournals();
   }
 
-  ListView _productBaseBody() {
+
+  void _filterSearchResults(String query) {
+    if (query.isNotEmpty) {
+      List<Map<String, dynamic>> dummySearchList = List.from(_journals);
+      List<Map<String, dynamic>> dummyListData = [];
+      for (var item in dummySearchList) {
+        if (item["name"].toLowerCase().contains(query.toLowerCase())) {
+          dummyListData.add(item);
+        }
+      }
+      setState(() {
+        filteredItems.clear(); // Можно оставить
+        filteredItems.addAll(dummyListData); // Или присвоить новое значение
+      });
+      return;
+    } else {
+      setState(() {
+        filteredItems = List.from(_journals); // Убедитесь, что _journals изменяемо
+      });
+    }
+  }
+
+  List<Map<String, dynamic>> filteredItems = [];
+
+    ListView _productBaseBody() {
     return ListView.builder(
         itemCount: _journals.length,
         itemBuilder: (context, index) =>
@@ -182,9 +211,52 @@ class _ProductBaseClassState extends State<ProductBaseClass> {
                         returnDeleteIcon(_journals[index]['main'], index),
                       ],
                     )
+/*  Widget _productBaseBody() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        children: [
+          TextField(
+            onChanged: (value) => _filterSearchResults(value),
+            decoration: const InputDecoration(
+              hintText: "Поиск продукта по названию",
+              prefixIcon: Icon(Icons.search),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(10.0)),
+              ),
+            ),
+          ),
+          const SizedBox(height: 10),
+          Expanded( // Используем Expanded здесь
+            child: ListView.builder(
+              itemCount: filteredItems.length,
+              itemBuilder: (context, index) => Card(
+                color: Colors.grey[100],
+                margin: const EdgeInsets.all(15),
+                child: ListTile(
+                  title: Text(
+                      '${filteredItems[index]['name']}\n${filteredItems[index]['carbohydrates']}г углеводов на 100г'),
+                  subtitle: FutureBuilder<String>(
+                    future: SQLhelper().getProductBU(filteredItems[index]['id']),
+                    builder: (context, snapshot) {
+                      return Text('${snapshot.data}');
+                    },
+                  ),
+                  trailing: SizedBox(
+                      width: 100,
+                      child: Row(
+                        children: [
+                          returnEditIcon(filteredItems[index]['main'], index),
+                          returnDeleteIcon(filteredItems[index]['main'], index),
+                        ],
+                      )),
+*/
                 ),
               ),
-            )
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -239,7 +311,7 @@ class _ProductBaseClassState extends State<ProductBaseClass> {
       return IconButton(
           onPressed: () {
             setState(() {
-              _deleteItem(_journals[index]['id']);
+              _deleteItem(filteredItems[index]['id']);
             });
           },
           icon: const Icon(Icons.delete)
@@ -252,7 +324,7 @@ class _ProductBaseClassState extends State<ProductBaseClass> {
       return IconButton(
           onPressed: () {
             setState(() {
-              _showForm(_journals[index]['id']);
+              _showForm(filteredItems[index]['id']);
             });
           },
           icon: const Icon(Icons.edit)
@@ -261,15 +333,24 @@ class _ProductBaseClassState extends State<ProductBaseClass> {
     return SizedBox.shrink();
   }
 
-  FloatingActionButton _productBaseFloatingActionButton() {
-    return FloatingActionButton(
-      onPressed: () {
-        setState(() {
-          _showForm(null);
-        });
-      },
-      child: Icon(Icons.add),
-      backgroundColor: Colors.blueAccent[100],
+  Widget _productBaseFloatingActionButton() {
+    return Stack(
+      children: <Widget>[
+        // Другие виджеты вашего интерфейса
+        Positioned(
+          right: 15, // Установите отступ от правого края
+          bottom: 45, // Установите отступ от нижнего края
+          child: FloatingActionButton(
+            onPressed: () {
+              setState(() {
+                _showForm(null);
+              });
+            },
+            backgroundColor: Colors.blueAccent[100],
+            child: const Icon(Icons.add),
+          ),
+        ),
+      ],
     );
   }
 
@@ -311,13 +392,6 @@ class _ProductBaseClassState extends State<ProductBaseClass> {
             onTap: null,
           ),
           ListTile(
-            leading: Icon(Icons.menu_book_rounded, color: Colors.blueAccent[100]),
-            title: Text('История'),
-            onTap: () {
-              Navigator.popAndPushNamed(context, 'history');
-            },
-          ),
-          ListTile(
             leading: Icon(Icons.settings, color: Colors.blueAccent[100]),
             title: Text('Настройки'),
             onTap: () {
@@ -356,7 +430,10 @@ class _ProductBaseClassState extends State<ProductBaseClass> {
   Future<void> _refreshJournals() async {
     final data = await SQLhelper().getProductItem(_sortKey, _ascending, isCustomChecked, isBuiltInChecked);
     setState(() {
-      if (data != null) _journals = data;
+      if (data != null) {
+        _journals = data; // Преобразуем QueryResultSet в список
+        filteredItems = List<Map<String, dynamic>>.from(_journals);
+      }
       _isLoading = false;
     });
   }
@@ -371,15 +448,6 @@ class _ProductBaseClassState extends State<ProductBaseClass> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _carbohydratesController = TextEditingController();
 
-  bool _hasName(String name) {
-    for (var product in _journals) {
-      if (product['name'] == name) {
-        return true;
-      }
-    }
-    return false;
-  }
-
   void _showForm(int? id) async {
     if (id != null) {
       final existingJournal = _journals.firstWhere((element) =>
@@ -391,7 +459,6 @@ class _ProductBaseClassState extends State<ProductBaseClass> {
     showModalBottomSheet(
         context: context,
         elevation: 5,
-        //тень
         isScrollControlled: true,
         backgroundColor: Colors.white,
         isDismissible: false,
@@ -400,15 +467,13 @@ class _ProductBaseClassState extends State<ProductBaseClass> {
             top: 15,
             left: 15,
             right: 15,
-            bottom: MediaQuery.of(context).viewInsets.bottom + 275,
+            bottom: MediaQuery.of(context).viewInsets.bottom + 100,
           ),
-          child: Form(
-            key: _key,
-            child: Column(
+          child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              TextFormField(
+              TextField(
                 controller: _nameController,
                 cursorColor: Colors.blueAccent[100],
                 decoration: const InputDecoration(
@@ -421,22 +486,11 @@ class _ProductBaseClassState extends State<ProductBaseClass> {
                   ),
                   focusColor: Colors.blueAccent,
                 ),
-                validator: (String? value) {
-                  if (value != null && value.isEmpty){
-                    return 'Пожалуйста, введите название продукта';
-                  }
-                  if (value != null && value.contains('\$')) {
-                    return 'Название продукта содержит запрещенный знак \$';
-                  }
-                  if (_hasName(value!) == true) {
-                    return 'Продукт с таким именем уже существует';
-                  }
-                },
               ),
               const SizedBox(
                 height: 15,
               ),
-              TextFormField(
+              TextField(
                 controller: _carbohydratesController,
                 cursorColor: Colors.blueAccent[100],
                 keyboardType: TextInputType.numberWithOptions(
@@ -448,51 +502,61 @@ class _ProductBaseClassState extends State<ProductBaseClass> {
                 decoration: const InputDecoration(
                   labelText: 'Количество углеводов',
                   labelStyle: TextStyle(color: Colors.black),
-                  hintStyle: TextStyle(color: Colors.black54),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.all(
                         Radius.circular(4.0)),
                     borderSide: BorderSide(color: Colors.blueAccent),
                   ),
                 ),
-                validator: (value) {
-                  var carbs = double.parse(value.toString());
-                  if (carbs < 0 || carbs > 100) {
-                    return 'Было введено неправильное количество углеводов - ${value.toString()}';
-                  }
-                },
               ),
               const SizedBox(
                 height: 15,
               ),
               ElevatedButton(
                 onPressed: () async {
-                  if (_key.currentState!.validate()) {
-                    if (id == null) {
-                      await _addItem();
-                      // Очистим поле
-                      _nameController.text = '';
-                      _carbohydratesController.text = '';
-                      carbohydrates = 0;
-                      await _refreshJournals();
-                      // Закрываем шторку
-                      if (!mounted) return;
-                      Navigator.of(context).pop();
-                    } else if (id != null) {
-                      await _updateItem(id);
-                      // Очистим поле
-                      _nameController.text = '';
-                      _carbohydratesController.text = '';
-                      carbohydrates = 0;
-                      await _refreshJournals();
-                      // Закрываем шторку
-                      if (!mounted) return;
-                      Navigator.of(context).pop();
-                    }
+                  if (double.parse('${_carbohydratesController.text}') >
+                      100 ||
+                      double.parse('${_carbohydratesController.text}') <
+                          0) {
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                              title: Text('Ошибка'),
+                              content: Text(
+                                  'Было введено неправильное количество углеводов - ${_carbohydratesController
+                                      .text}. \n Количество углеводов должно не превышать 100 грамм, но и не быть меньше нуля.'),
+                              actions: [ElevatedButton(onPressed: () {
+                                Navigator.of(context).pop();
+                              }, child: Text('Выйти'))
+                              ]
+                          );
+                        }
+                    );
+                  } else if (id == null) {
+                    await _addItem();
+                    // Очистим поле
+                    _nameController.text = '';
+                    _carbohydratesController.text = '';
+                    carbohydrates = 0;
+                    await _refreshJournals();
+                    // Закрываем шторку
+                    if (!mounted) return;
+                    Navigator.of(context).pop();
+                  } else if (id != null) {
+                    await _updateItem(id);
+                    // Очистим поле
+                    _nameController.text = '';
+                    _carbohydratesController.text = '';
+                    carbohydrates = 0;
+                    await _refreshJournals();
+                    // Закрываем шторку
+                    if (!mounted) return;
+                    Navigator.of(context).pop();
                   }
                 },
                 child: Text(
-                    'Добавить', style: TextStyle(color: Colors.black)),
+                    'Ок', style: TextStyle(color: Colors.black)),
               ),
               const SizedBox(
                 height: 5,
@@ -505,7 +569,6 @@ class _ProductBaseClassState extends State<ProductBaseClass> {
                     'Отмена', style: TextStyle(color: Colors.black),))
             ],
           ),
-          )
         )
     );
   }

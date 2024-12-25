@@ -2,6 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../DataBase/data_base.dart';
+import 'package:searchfield/searchfield.dart';
+import 'package:flutter_calendar_carousel/classes/event.dart';
+import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart' show CalendarCarousel;
 
 class MainPageClass extends StatefulWidget {
   const MainPageClass({super.key});
@@ -11,14 +14,23 @@ class MainPageClass extends StatefulWidget {
 }
 
 class _MainPageClassState extends State<MainPageClass> {
+
+  DateTime _selectedDate = DateTime.now();
+  bool _isCalendarVisible = false;
+  String productBU = "";
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: _mainPageAppBar(),
-      body: _mainPageBody(),
-      drawer: _mainPageDrawer(),
+    return PopScope(
+        canPop: false,
+        child: Scaffold(
+          appBar: _mainPageAppBar(),
+          body: _mainPageBody(),
+          drawer: _mainPageDrawer(),
+        ),
     );
   }
+
   AppBar _mainPageAppBar() {
     return AppBar(
       title: Text('Прием пищи'),
@@ -26,8 +38,20 @@ class _MainPageClassState extends State<MainPageClass> {
       backgroundColor: Colors.blueAccent[100],
       actions: [
         IconButton(
-            onPressed: () {appBarTime();},
-            icon: Icon(Icons.add)
+          onPressed: () {
+            setState(() {
+              _isCalendarVisible = !_isCalendarVisible;
+            });
+          },
+          icon: Icon(
+            Icons.calendar_month,
+            color: _isCalendarVisible ? Colors.white : Colors.black,
+
+          ),
+        ),
+        IconButton(
+          onPressed: () {appBarTime();},
+          icon: Icon(Icons.add, color: Colors.black,),
         ),
       ],
     );
@@ -51,7 +75,6 @@ class _MainPageClassState extends State<MainPageClass> {
       _showFormChoiceAdd(5);
     }
   }
-
 
   Drawer _mainPageDrawer() {
     return Drawer(
@@ -91,13 +114,6 @@ class _MainPageClassState extends State<MainPageClass> {
             },
           ),
           ListTile(
-            leading: Icon(Icons.menu_book_rounded, color: Colors.blueAccent[100]),
-            title: Text('История'),
-            onTap: () {
-              Navigator.popAndPushNamed(context, 'history');
-            },
-          ),
-          ListTile(
             leading: Icon(Icons.settings, color: Colors.blueAccent[100]),
             title: Text('Настройки'),
             onTap: () {
@@ -123,13 +139,94 @@ class _MainPageClassState extends State<MainPageClass> {
     );
   }
 
+  Widget _calendar() {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 16.0),
+      child: CalendarCarousel<Event>(
+        onDayPressed: (DateTime date, List<Event> events) async {
+          setState(() => _selectedDate = date);
+          await _refreshJournals();
+        },
+        todayBorderColor: Colors.white,
+        todayButtonColor: Colors.white,
+        selectedDayBorderColor: Colors.white,
+        selectedDayButtonColor: Colors.white,
+        weekendTextStyle: TextStyle(
+          color: Colors.red,
+        ),
+        thisMonthDayBorderColor: Colors.blue,
+        selectedDateTime: _selectedDate,
+        customDayBuilder: (
+            bool isSelectable,
+            int index,
+            bool isSelectedDay,
+            bool isToday,
+            bool isPrevMonthDay,
+            TextStyle textStyle,
+            bool isNextMonthDay,
+            bool isThisMonthDay,
+            DateTime day,
+            ) {
+          if (isSelectedDay) {
+            return Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.blueAccent[100],  // цвет заливки выбранного дня
+              ),
+              child: Center(
+                child: Text(
+                  day.day.toString(),
+                  style: textStyle,
+                ),
+              ),
+            );
+          } else if (isToday) {
+            return Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.pinkAccent[100],  // цвет заливки сегодняшнего дня
+              ),
+              child: Center(
+                child: Text(
+                  day.day.toString(),
+                  style: textStyle,
+                ),
+              ),
+            );
+          }
+          return null;  // использовать стиль по умолчанию для остальных дней
+        },
+        weekFormat: false,
+        height: 430.0,
+        daysHaveCircularBorder: true,
+        locale: 'ru',
+        isScrollable: false,
+        pageScrollPhysics: const NeverScrollableScrollPhysics(),
+      ),
+    );
+  }
+
+  Widget _buSum() {
+    return Container(
+      child: Center(
+        child:
+            Text("$BUsum ХЕ", style: TextStyle(fontSize: 46),
+        ),
+      ),
+    );
+  }
+
   Widget _mainPageBody() {
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
-          SizedBox(height: 15,),
+          if(_isCalendarVisible)
+            _calendar(),
+          SizedBox(height: 5,),
+          _buSum(),
+          SizedBox(height: 5,),
           _mainPageBreakfast(),
           SizedBox(height: 5,),
           _mainPageCardsBreakfast(),
@@ -407,7 +504,6 @@ class _MainPageClassState extends State<MainPageClass> {
     );
   }
 
-
   void _showFormChoiceAdd(int time) {
     showModalBottomSheet(
         isScrollControlled: true,
@@ -418,8 +514,8 @@ class _MainPageClassState extends State<MainPageClass> {
         builder: (_) => Container(
              padding: EdgeInsets.only(
                top: 25,
-               left: 75,
-               right: 75,
+               left: 110,
+               right: 110,
                bottom: 200
              ),
             child: Column(
@@ -467,22 +563,24 @@ class _MainPageClassState extends State<MainPageClass> {
         BUlunch = '',
         BULlunch = '',
         BUdinner = '',
-        BULdinner = '';
+        BULdinner = '',
+        BUsum = '';
   bool _isLoading = true;
   Future<void> _refreshJournals() async {
-    BUbreakfast = await SQLhelper().returnBUSumma(0);
-    BULbreakfast = await SQLhelper().returnBUSumma(1);
-    BUlunch = await SQLhelper().returnBUSumma(2);
-    BULlunch = await SQLhelper().returnBUSumma(3);
-    BUdinner = await SQLhelper().returnBUSumma(4);
-    BULdinner = await SQLhelper().returnBUSumma(5);
+    BUbreakfast = await SQLhelper().returnBUSumma(0, _selectedDate);
+    BULbreakfast = await SQLhelper().returnBUSumma(1, _selectedDate);
+    BUlunch = await SQLhelper().returnBUSumma(2, _selectedDate);
+    BULlunch = await SQLhelper().returnBUSumma(3, _selectedDate);
+    BUdinner = await SQLhelper().returnBUSumma(4, _selectedDate);
+    BULdinner = await SQLhelper().returnBUSumma(5, _selectedDate);
+    BUsum = "${double.parse(BUbreakfast) + double.parse(BULbreakfast) + double.parse(BUlunch) + double.parse(BULlunch) +double.parse(BUdinner) + double.parse(BULdinner)}";
 
-    final dataLateDinner = await SQLhelper().getLateDinnerItem();
-    final dataDinner = await SQLhelper().getDinnerItem();
-    final dataLateLunch = await SQLhelper().getLateLunchItem();
-    final dataLunch = await SQLhelper().getLunchItem();
-    final dataLateBreakfast = await SQLhelper().getLateBreakfastItem();
-    final dataBreakfast = await SQLhelper().getBreakfastItem();
+    final dataLateDinner = await SQLhelper().getLateDinnerItem(_selectedDate);
+    final dataDinner = await SQLhelper().getDinnerItem(_selectedDate);
+    final dataLateLunch = await SQLhelper().getLateLunchItem(_selectedDate);
+    final dataLunch = await SQLhelper().getLunchItem(_selectedDate);
+    final dataLateBreakfast = await SQLhelper().getLateBreakfastItem(_selectedDate);
+    final dataBreakfast = await SQLhelper().getBreakfastItem(_selectedDate);
     final dataProducts = await SQLhelper().getProductItem();
     final dataDish = await SQLhelper().getDishItem();
     setState(() {
@@ -518,8 +616,8 @@ class _MainPageClassState extends State<MainPageClass> {
       }
       _isLoading = false;
     });
-
   }
+
   @override
   void initState() {
     super.initState();
@@ -527,6 +625,7 @@ class _MainPageClassState extends State<MainPageClass> {
   }
 
   final TextEditingController _gramsController = TextEditingController();
+
   void _showFormAddProduct(int time) {
     int productId = 0;
     showModalBottomSheet(
@@ -548,38 +647,44 @@ class _MainPageClassState extends State<MainPageClass> {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 //выбор продукта
-                DropdownButtonFormField(
-                  decoration: const InputDecoration(
-                    labelText: 'Выберите продукт',
-                    labelStyle: TextStyle(color: Colors.black),
-                    hintStyle: TextStyle(color: Colors.black54),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(
-                          Radius.circular(4.0)),
-                      borderSide: BorderSide(color: Colors.blueAccent),
-                    ),
-                  ),
-                  disabledHint: productId != null //можно удалить
-                      ? Text(_journalsProducts.firstWhere((item) => item["id"] == productId)["name"])
-                      : null,
-                  isExpanded: false,
-                  value: productId,
-                  items: _journalsProducts.map<DropdownMenuItem<int>>((e) {
-                    return DropdownMenuItem
-                      (
-                      child: Text(
-                        e["name"],
+                SearchField<Map<String, dynamic>>(
+                  hint: "Поиск по названию продукта",
+                  suggestions: _journalsProducts
+                      .map(
+                        (e) => SearchFieldListItem<Map<String, dynamic>>(
+                      e["name"],
+                      item: e,
+
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          children: [
+                            Text(e["name"]),
+                          ],
+                        ),
                       ),
-                      value: e["id"],
-                    );
-                  }).toList(),
-                  onChanged: (t) {
-                    setState(() {
-                      productId = t!;
-                      MediaQuery.of(context).viewInsets.bottom;
-                    });
+                    ),
+                  ).toList(),
+                  onSuggestionTap: (suggestion) {
+                    productId = suggestion.item?['id'];
                   },
+                    searchInputDecoration: SearchInputDecoration(
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.blueAccent,
+                        ),
+                        borderRadius: BorderRadius.all(
+                            Radius.circular(4.0)),
+                      ),
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.blueAccent),
+                        borderRadius: BorderRadius.all(
+                            Radius.circular(4.0)),
+                      ),
+                    ),
+                    maxSuggestionsInViewPort: 3,
                 ),
+
                 SizedBox(height: 15,),
                 // ввод граммов
                 TextField(
@@ -588,8 +693,6 @@ class _MainPageClassState extends State<MainPageClass> {
                   decoration: const InputDecoration(
                     labelText: 'Граммы',
                     labelStyle: TextStyle(color: Colors.black),
-                    hintText: 'Ввод граммов',
-                    hintStyle: TextStyle(color: Colors.black54),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.all(
                           Radius.circular(4.0)),
@@ -598,6 +701,20 @@ class _MainPageClassState extends State<MainPageClass> {
                     focusColor: Colors.blueAccent,
                   ),
                 ),
+                //Text("ХЕ: " + _getBu(productId, int.parse("${_gramsController.text}")).toString(), style: TextStyle(color: Colors.black)),
+                /*FutureBuilder<String>(
+                  future: _formatBU(_gramsController.text, productId), // async work
+                  builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+                    switch (snapshot.connectionState) {
+                      case ConnectionState.waiting: return Text('Loading....');
+                      default:
+                        if (snapshot.hasError)
+                          return Text('Error: ${snapshot.error}');
+                        else
+                          return Text('Result: ${snapshot.data}');
+                    }
+                  },
+                ),*/
                 const SizedBox(
                   height: 15,
                 ),
@@ -625,104 +742,143 @@ class _MainPageClassState extends State<MainPageClass> {
         )
     );
   }
+
+  /*Future<String> _formatBU(String grams, int productId) async {
+    if (grams == "") {
+      return "";
+    }
+    return "${await _getBu(productId, int.parse("${grams}"))}";
+  }*/
+
   void _showFormAddDish(int time) {
-    int dishId = _journalsDish[0]['id'];
-    showModalBottomSheet(
-        isScrollControlled: true,
+    if (_journalsDish.isEmpty) {
+      Widget okButton = ElevatedButton(
+        child: Text("Хорошо, я добавлю", style: TextStyle(color: Colors.black),),
+        onPressed: () {
+          Navigator.of(context).pop();
+        },
+      );
+      AlertDialog alert = AlertDialog(
+        content: Center(
+          heightFactor: 2,
+          child: Text("В базе данных нет блюд", style: TextStyle(color: Colors.black),),
+        ),
+        actions: [
+          okButton,
+        ],
+      );
+      showDialog(
         context: context,
-        elevation: 5,
-        backgroundColor: Colors.white,
-        isDismissible: false,
-        builder: (_) => Container(
-            padding: EdgeInsets.only(
-              top: 15,
-              left: 15,
-              right: 15,
-              // это предотвратит закрытие текстовых полей программной клавиатурой
-              bottom: MediaQuery.of(context).viewInsets.bottom + 50,
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                //выбор продукта
-                DropdownButtonFormField(
-                  decoration: const InputDecoration(
-                    labelText: 'Выберите блюдо',
-                    labelStyle: TextStyle(color: Colors.black),
-                    hintStyle: TextStyle(color: Colors.black54),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(
-                          Radius.circular(4.0)),
-                      borderSide: BorderSide(color: Colors.blueAccent),
-                    ),
-                  ),
-                  isExpanded: false,
-                  value: dishId,
-                  items: _journalsDish.map<DropdownMenuItem<int>>((e) {
-                    return DropdownMenuItem
-                      (
-                      child: Text(
+        builder: (BuildContext context) {
+          return alert;
+        },
+      );
+    }
+    else {
+      int dishId = _journalsDish[0]['id'];
+      showModalBottomSheet(
+          isScrollControlled: true,
+          context: context,
+          elevation: 5,
+          backgroundColor: Colors.white,
+          isDismissible: false,
+          builder: (_) => Container(
+              padding: EdgeInsets.only(
+                top: 15,
+                left: 15,
+                right: 15,
+                // это предотвратит закрытие текстовых полей программной клавиатурой
+                bottom: MediaQuery.of(context).viewInsets.bottom + 50,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  SearchField<Map<String, dynamic>>(
+                    hint: "Поиск по названию блюда",
+                    suggestions: _journalsDish
+                        .map(
+                          (e) => SearchFieldListItem<Map<String, dynamic>>(
                         e["name"],
+                        item: e,
+
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            children: [
+                              Text(e["name"]),
+                            ],
+                          ),
+                        ),
                       ),
-                      value: e["id"],
-                    );
-                  }).toList(),
-                  onChanged: (t) {
-                    setState(() {
-                      dishId = t!;
-                      MediaQuery.of(context).viewInsets.bottom;
-                    });
-                  },
-                ),
-                SizedBox(height: 15,),
-                // ввод граммов
-                SizedBox(height: 15,),
-                // ввод граммов
-                TextField(
-                  controller: _gramsController,
-                  keyboardType: TextInputType.numberWithOptions(decimal: true),
-                  decoration: const InputDecoration(
-                    labelText: 'Граммы',
-                    labelStyle: TextStyle(color: Colors.black),
-                    hintText: 'Ввод граммов',
-                    hintStyle: TextStyle(color: Colors.black54),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(
-                          Radius.circular(4.0)),
-                      borderSide: BorderSide(color: Colors.blueAccent),
+                    ).toList(),
+                    onSuggestionTap: (suggestion) {
+                      dishId = suggestion.item?['id'];
+                    },
+                    searchInputDecoration: SearchInputDecoration(
+                      focusedBorder: const OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.blueAccent,
+                        ),
+                        borderRadius: BorderRadius.all(
+                            Radius.circular(4.0)),
+                      ),
+                      border: const OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.blueAccent),
+                        borderRadius: BorderRadius.all(
+                            Radius.circular(4.0)),
+                      ),
                     ),
-                    focusColor: Colors.blueAccent,
+                    maxSuggestionsInViewPort: 3,
                   ),
-                ),
-                const SizedBox(
-                  height: 15,
-                ),
-                ElevatedButton(
-                  onPressed: () async {
-                    _addItem(dishId, null, int.parse("${_gramsController.text}"), time);
-                    _gramsController.text = '';
-                    await _refreshJournals();
-                    // Закрываем шторку
-                    if (!mounted) return;
-                    Navigator.of(context).pop();
-                  },
-                  child: Text('Добавить', style: TextStyle(color: Colors.black)),
-                ),
-                const SizedBox(
-                  height: 5,
-                ),
-                ElevatedButton(
-                    onPressed: () {
+                  const SizedBox(height: 15,),
+                  // ввод граммов
+                  const SizedBox(height: 15,),
+                  // ввод граммов
+                  TextField(
+                    controller: _gramsController,
+                    keyboardType: TextInputType.numberWithOptions(decimal: true),
+                    decoration: const InputDecoration(
+                      labelText: 'Граммы',
+                      labelStyle: TextStyle(color: Colors.black),
+                      hintText: 'Ввод граммов',
+                      hintStyle: TextStyle(color: Colors.black54),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(
+                            Radius.circular(4.0)),
+                        borderSide: BorderSide(color: Colors.blueAccent),
+                      ),
+                      focusColor: Colors.blueAccent,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  ElevatedButton(
+                    onPressed: () async {
+                      _addItem(dishId, null, int.parse(_gramsController.text), time);
+                      _gramsController.text = '';
+                      await _refreshJournals();
+                      // Закрываем шторку
+                      if (!mounted) return;
                       Navigator.of(context).pop();
                     },
-                    child: Text('Отмена', style: TextStyle(color: Colors.black),))
-              ],
-            )
-        )
-    );
+                    child: const Text('Добавить', style: TextStyle(color: Colors.black)),
+                  ),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text('Отмена', style: TextStyle(color: Colors.black),))
+                ],
+              )
+          )
+      );
+    }
   }
-
 
   Widget _mainPageCardsBreakfast() {
     return SizedBox(
@@ -970,10 +1126,39 @@ class _MainPageClassState extends State<MainPageClass> {
     );
   }
 
-
   void _showFormEdit(int id, int time) async {
     String name = '';
-    final existingJournal = _journalsBreakfast.firstWhere((element) => element['id'] == id);
+
+    List<Map<String, dynamic>> currentList;
+
+    switch (time) {
+      case 0:
+        currentList = _journalsBreakfast;
+        break;
+      case 1:
+        currentList = _journalsLateBreakfast;
+        break;
+      case 2:
+        currentList = _journalsLunch;
+        break;
+      case 3:
+        currentList = _journalsLateLunch;
+        break;
+      case 4:
+        currentList = _journalsDinner;
+        break;
+      case 5:
+        currentList = _journalsLateDinner;
+        break;
+      default:
+        return; // если не подошло, выход из метода
+    }
+
+    final existingJournal = currentList.firstWhere(
+          (element) => element['id'] == id,
+    );
+
+   // final existingJournal = _journalsBreakfast.firstWhere((element) => element['id'] == id);
     _gramsController.text = "${existingJournal['grams']}";
     name = existingJournal['name'];
 
@@ -1005,8 +1190,6 @@ class _MainPageClassState extends State<MainPageClass> {
                   decoration: const InputDecoration(
                     labelText: 'Граммы',
                     labelStyle: TextStyle(color: Colors.black),
-                    hintText: 'Ввод граммов',
-                    hintStyle: TextStyle(color: Colors.black54),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.all(
                           Radius.circular(4.0)),
@@ -1047,20 +1230,26 @@ class _MainPageClassState extends State<MainPageClass> {
         )
     );
   }
+  //Узнать углеводы на определенное количество грамм продукта из БД
+  /*Future<double> _getBu(int idProduct, int grams) async {
+    var str = await SQLhelper().getProductClearBU(idProduct);
+    var bu = double.parse(str);
+    return Future.value((bu * grams) / 100);
+  }*/
 
   //Вставить новый объект в базу данных
   Future<void> _addItem(int? idDish, int? idProduct, int grams, int time) async {
-    await SQLhelper().createTimeItem(idDish, idProduct, grams, time);
+    await SQLhelper().createTimeItem(idDish, idProduct, grams, time, _selectedDate);
     await _refreshJournals();
   }
   //Обновить существующий объект
   Future<void> _updateItem(int? idDish, int? idProduct, int id, int grams, int time) async {
-    await SQLhelper().updateTimeItem(idDish, idProduct, id, grams, time);
+    await SQLhelper().updateTimeItem(idDish, idProduct, id, grams, time, _selectedDate);
     await _refreshJournals();
   }
   //Удалить существующий объект
-  void _deleteItem(int id, int time) async{
-    await SQLhelper().deleteTimeItem(id, time);
+  void _deleteItem(int id, int time ) async{
+    await SQLhelper().deleteTimeItem(id, time, _selectedDate);
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
       content: Text('Успешное удаление объекта!'),
     ));

@@ -10,10 +10,13 @@ class HelpClass extends StatefulWidget {
 class _HelpClassState extends State<HelpClass> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: _helpAppBar(),
-      body: _helpBody(),
-      drawer: _helpDrawer(),
+    return PopScope(
+        canPop: false,
+        child: Scaffold(
+          appBar: _helpAppBar(),
+          body: _helpBody(),
+          drawer: _helpDrawer(),
+        ),
     );
   }
 
@@ -101,13 +104,6 @@ class _HelpClassState extends State<HelpClass> {
             title: Text('База продуктов'),
             onTap: () {
               Navigator.popAndPushNamed(context, 'product_base');
-            },
-          ),
-          ListTile(
-            leading: Icon(Icons.menu_book_rounded, color: Colors.blueAccent[100]),
-            title: Text('История'),
-            onTap: () {
-              Navigator.popAndPushNamed(context, 'history');
             },
           ),
           ListTile(

@@ -10,10 +10,13 @@ class SettingsClass extends StatefulWidget {
 class _SettingsClassState extends State<SettingsClass> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: _settingsAppBar(),
-      body: null,
-      drawer: _settingsDrawer(),
+    return PopScope(
+        canPop: false,
+        child: Scaffold(
+          appBar: _settingsAppBar(),
+          body: null,
+          drawer: _settingsDrawer(),
+        ),
     );
   }
 
@@ -64,13 +67,6 @@ class _SettingsClassState extends State<SettingsClass> {
             title: Text('База продуктов'),
             onTap: () {
               Navigator.popAndPushNamed(context, 'product_base');
-            },
-          ),
-          ListTile(
-            leading: Icon(Icons.menu_book_rounded, color: Colors.blueAccent[100]),
-            title: Text('История'),
-            onTap: () {
-              Navigator.popAndPushNamed(context, 'history');
             },
           ),
           ListTile(

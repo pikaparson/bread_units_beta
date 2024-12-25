@@ -21,8 +21,7 @@ class SQLhelper {
   Future<Database?> db() async {
     final Directory dir = await getApplicationDocumentsDirectory(); //path_provider.dart
     final String path = '${dir.path}/db.sqlite';
-    return await openDatabase(
-        path, version: 1, onCreate: (Database database, int version) async {
+    return await openDatabase(path, version: 1, onCreate: (Database database, int version) async {
       await database.execute("""CREATE TABLE products(
         id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
         name TEXT NOT NULL,
@@ -53,7 +52,7 @@ class SQLhelper {
         product INTEGER REFERENCES products (id),
         dish INTEGER REFERENCES dishes (id),
         grams INTEGER NOT NULL,
-        createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+        createdDate TEXT NOT NULL
         )
       """);
       await database.execute("""CREATE TABLE late_breakfasts(
@@ -63,7 +62,7 @@ class SQLhelper {
         product INTEGER REFERENCES products (id),
         dish INTEGER REFERENCES dishes (id),
         grams INTEGER NOT NULL,
-        createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+        createdDate TEXT NOT NULL
         )
       """);
       await database.execute("""CREATE TABLE lunches(
@@ -73,7 +72,7 @@ class SQLhelper {
         product INTEGER REFERENCES products (id),
         dish INTEGER REFERENCES dishes (id),
         grams INTEGER NOT NULL,
-        createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+        createdDate TEXT NOT NULL
         )
       """);
       await database.execute("""CREATE TABLE late_lunches(
@@ -83,7 +82,7 @@ class SQLhelper {
         product INTEGER REFERENCES products (id),
         dish INTEGER REFERENCES dishes (id),
         grams INTEGER NOT NULL,
-        createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+        createdDate TEXT NOT NULL
         )
       """);
       await database.execute("""CREATE TABLE dinners(
@@ -93,7 +92,7 @@ class SQLhelper {
         product INTEGER REFERENCES products (id),
         dish INTEGER REFERENCES dishes (id),
         grams INTEGER NOT NULL,
-        createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+        createdDate TEXT NOT NULL
         )
       """);
       await database.execute("""CREATE TABLE late_dinners(
@@ -103,7 +102,7 @@ class SQLhelper {
         product INTEGER REFERENCES products (id),
         dish INTEGER REFERENCES dishes (id),
         grams INTEGER NOT NULL,
-        createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+        createdDate TEXT NOT NULL
         )
       """);
       await database.execute("""CREATE TABLE control(
@@ -115,7 +114,7 @@ class SQLhelper {
       """);
     });
   }
-  
+
   // CONTROL --- CONTROL --- CONTROL --- CONTROL --- CONTROL --- CONTROL --- CONTROL --- CONTROL --- CONTROL --- CONTROL --- CONTROL --- CONTROL --- CONTROL --- CONTROL --- CONTROL --- CONTROL
   // Добавление имени блюда в контроль
   Future<int> controlInsertDishName(String d) async {
@@ -144,17 +143,41 @@ class SQLhelper {
     return a;
   }
 
+  //Вернуть углеводы продукта по id
+  /*
+  Future<double> controlProductCarbs(int? id) async {
+    final Database? db = await database;
+    final help = await db!.rawQuery('SELECT *FROM dishes WHERE id = ?', [id]);
+    double carbs = await double.parse(help[0]['carbohydrates'].toString());
+    return carbs;
+  }
+  */
 
+
+  String castDateTime(DateTime dateTime)
+  {
+    String date;
+    int year = dateTime.year;
+    int month = dateTime.month;
+    int day = dateTime.day;
+
+    // this shit is because we use time in other mean, like enum
+    // TODO create an enumerate for the periods ("time" in this function)
+    date = "${year}-${month}-${day} 00:00:00.000Z";
+
+    return date;
+  }
 
   // ПРОМЕЖУТКИ --- ПРОМЕЖУТКИ --- ПРОМЕЖУТКИ --- ПРОМЕЖУТКИ --- ПРОМЕЖУТКИ --- ПРОМЕЖУТКИ --- ПРОМЕЖУТКИ --- ПРОМЕЖУТКИ --- ПРОМЕЖУТКИ --- ПРОМЕЖУТКИ --- ПРОМЕЖУТКИ --- ПРОМЕЖУТКИ --- ПРОМЕЖУТКИ
   // Добавить объект в промежуток
-  Future<int> createTimeItem(int? idDish, int? idProduct, int grams, int time) async {
+  Future<int> createTimeItem(int? idDish, int? idProduct, int grams, int time, DateTime selectedDate) async {
     final Database? db = await database;
     final helper;
     Map<String, Object?> data = {};
     int idD, idP;
     String name;
     double carb = 0;
+
     if (idDish != null) {
       idD = idDish!;
       name = "${await controlDishName()}";
@@ -164,7 +187,7 @@ class SQLhelper {
         'carbohydrates': carb,
         'dish': idD,
         'grams': grams,
-        'createdAt': DateTime.now().toString()
+        'createdDate': castDateTime(selectedDate),
       };
     } else if (idProduct != null) {
       idP = idProduct!;
@@ -176,7 +199,7 @@ class SQLhelper {
         'carbohydrates': carb,
         'product': idP,
         'grams': grams,
-        'createdAt': DateTime.now().toString()
+        'createdDate': castDateTime(selectedDate),
       };
     }
 
@@ -194,7 +217,7 @@ class SQLhelper {
     return await db!.insert('late_dinners', data, conflictAlgorithm: ConflictAlgorithm.replace);
   }
   // Обновить объект в промежутке
-  Future<int?> updateTimeItem(int? idDish, int? idProduct, int id, int grams, int time) async {
+  Future<int?> updateTimeItem(int? idDish, int? idProduct, int id, int grams, int time, DateTime selectedDate) async {
     final Database? db = await database;
     final helper;
     Map<String, Object?> data = {};
@@ -210,7 +233,7 @@ class SQLhelper {
         'carbohydrates': carb,
         'dish': idD,
         'grams': grams,
-        'createdAt': DateTime.now().toString()
+        'createdDate': castDateTime(selectedDate)
       };
     } else if (idProduct != null) {
       idP = idProduct!;
@@ -222,7 +245,7 @@ class SQLhelper {
         'carbohydrates': carb,
         'product': idP,
         'grams': grams,
-        'createdAt': DateTime.now().toString()
+        'createdDate': castDateTime(selectedDate)
       };
     }
     if (time == 0) {
@@ -239,21 +262,22 @@ class SQLhelper {
     return await db?.update('late_dinners', data, where: "id = ?", whereArgs: [id]);
   }
   //удалить элемент промежутка
-  Future<void> deleteTimeItem(int id, int time) async {
+  Future<void> deleteTimeItem(int id, int time, DateTime selectedDate) async {
+    var date = castDateTime(selectedDate);
     final Database? db = await database;
     try {
       if (time == 0) {
-        await db?.delete("breakfasts", where: "id = ?", whereArgs: [id]);
+        await db?.delete("breakfasts", where: "id = ? AND createdDate = ?", whereArgs: [id, date] );
       } else if (time == 1) {
-        await db?.delete("late_breakfasts", where: "id = ?", whereArgs: [id]);
+        await db?.delete("late_breakfasts", where: "id = ? AND createdDate = ?", whereArgs: [id, date] );
       } else if (time == 2) {
-        await db?.delete("lunches", where: "id = ?", whereArgs: [id]);
+        await db?.delete("lunches", where: "id = ? AND createdDate = ?", whereArgs: [id, date] );
       } else if (time == 3) {
-        await db?.delete("late_lunches", where: "id = ?", whereArgs: [id]);
+        await db?.delete("late_lunches", where: "id = ? AND createdDate = ?", whereArgs: [id, date] );
       } else if (time == 4) {
-        await db?.delete("dinners", where: "id = ?", whereArgs: [id]);
+        await db?.delete("dinners", where: "id = ? AND createdDate = ?", whereArgs: [id, date] );
       } else if (time == 5) {
-        await db?.delete("late_dinners", where: "id = ?", whereArgs: [id]);
+        await db?.delete("late_dinners", where: "id = ? AND createdDate = ?", whereArgs: [id, date] );
       }
     } catch (err) {
       debugPrint("Something went wrong when deleting an item: $err");
@@ -261,11 +285,11 @@ class SQLhelper {
   }
 
   // ХЕ в объекте промежутка
-  Future<int> returnObjectBU(int id, int time) async {
+  Future<int> returnObjectBU(int id, int time, DateTime selectedDate) async {
     final Database? db = await database;
     final journal;
     if (time == 0) {
-      journal = await db!.rawQuery('SELECT *FROM breakfasts WHERE id = ?', [id]);
+      journal = await db!.rawQuery('SELECT *FROM breakfasts WHERE id = ? AND createdDate = ?', [id, selectedDate]);
     } else if(time == 1) {
 
     }else if(time == 2) {
@@ -282,53 +306,53 @@ class SQLhelper {
   }
 
   // Прочитать все элементы завтрака
-  Future<List<Map<String, dynamic>>?> getBreakfastItem() async {
+  Future<List<Map<String, dynamic>>?> getBreakfastItem(DateTime selectedDate) async {
     final Database? db = await database;
-    return db!.query('breakfasts', orderBy: 'id');
+    return db!.query('breakfasts', orderBy: 'id', where: 'createdDate = ?', whereArgs: [castDateTime(selectedDate)]);
   }
   // Прочитать все элементы позднего завтрака
-  Future<List<Map<String, dynamic>>?> getLateBreakfastItem() async {
+  Future<List<Map<String, dynamic>>?> getLateBreakfastItem(DateTime selectedDate) async {
     final Database? db = await database;
-    return db!.query('late_breakfasts', orderBy: 'id');
+    return db!.query('late_breakfasts', orderBy: 'id', where: 'createdDate = ?', whereArgs: [castDateTime(selectedDate)]);
   }
   // Прочитать все элементы обеда
-  Future<List<Map<String, dynamic>>?> getLunchItem() async {
+  Future<List<Map<String, dynamic>>?> getLunchItem(DateTime selectedDate) async {
     final Database? db = await database;
-    return db!.query('lunches', orderBy: 'id');
+    return db!.query('lunches', orderBy: 'id', where: 'createdDate = ?', whereArgs: [castDateTime(selectedDate)]);
   }
   // Прочитать все элементы позднего обеда
-  Future<List<Map<String, dynamic>>?> getLateLunchItem() async {
+  Future<List<Map<String, dynamic>>?> getLateLunchItem(DateTime selectedDate) async {
     final Database? db = await database;
-    return db!.query('late_lunches', orderBy: 'id');
+    return db!.query('late_lunches', orderBy: 'id', where: 'createdDate = ?', whereArgs: [castDateTime(selectedDate)]);
   }
   // Прочитать все элементы ужина
-  Future<List<Map<String, dynamic>>?> getDinnerItem() async {
+  Future<List<Map<String, dynamic>>?> getDinnerItem(DateTime selectedDate) async {
     final Database? db = await database;
-    return db!.query('dinners', orderBy: 'id');
+    return db!.query('dinners', orderBy: 'id', where: 'createdDate = ?', whereArgs: [castDateTime(selectedDate)]);
   }
   // Прочитать все элементы позднего ужина
-  Future<List<Map<String, dynamic>>?> getLateDinnerItem() async {
+  Future<List<Map<String, dynamic>>?> getLateDinnerItem(DateTime selectedDate) async {
     final Database? db = await database;
-    return db!.query('late_dinners', orderBy: 'id');
+    return db!.query('late_dinners', orderBy: 'id', where: 'createdDate = ?', whereArgs: [castDateTime(selectedDate)]);
   }
 
   // Вернуть сумму ХЕ промежутка
-  Future<String> returnBUSumma(int time) async {
+  Future<String> returnBUSumma(int time, DateTime selectedDate) async {
     final Database? db = await database;
     var helper = null;
     double sumBU = 0;
     if (time == 0) {
-      helper = await db!.query('breakfasts', orderBy: 'id');
+      helper = await db!.query('breakfasts', orderBy: 'id', where: 'createdDate = ?', whereArgs: [castDateTime(selectedDate)]);
     } else if (time == 1) {
-      helper = await db!.query('late_breakfasts', orderBy: 'id');
+      helper = await db!.query('late_breakfasts', orderBy: 'id', where: 'createdDate = ?', whereArgs: [castDateTime(selectedDate)]);
     } else if (time == 2) {
-      helper = await db!.query('lunches', orderBy: 'id');
+      helper = await db!.query('lunches', orderBy: 'id', where: 'createdDate = ?', whereArgs: [castDateTime(selectedDate)]);
     } else if (time == 3) {
-      helper = await db!.query('late_lunches', orderBy: 'id');
+      helper = await db!.query('late_lunches', orderBy: 'id', where: 'createdDate = ?', whereArgs: [castDateTime(selectedDate)]);
     } else if (time == 4) {
-      helper = await db!.query('dinners', orderBy: 'id');
+      helper = await db!.query('dinners', orderBy: 'id', where: 'createdDate = ?', whereArgs: [castDateTime(selectedDate)]);
     } else if (time == 5) {
-      helper = await db!.query('late_dinners', orderBy: 'id');
+      helper = await db!.query('late_dinners', orderBy: 'id', where: 'createdDate = ?', whereArgs: [castDateTime(selectedDate)]);
     }
 
     if (helper != null) {
@@ -500,6 +524,16 @@ class SQLhelper {
     }
     return Future.value('');
   }
+
+  /*Future<String> getProductClearBU(int id) async {
+    final Database? db = await database;
+    final helper = await db?.rawQuery('SELECT carbohydrates FROM products WHERE id = ?', [id]);
+    if (helper != null) {
+    double helperDouble = double.parse(helper[0]['carbohydrates'].toString()) / 12;
+    return '${helperDouble.toStringAsFixed(2)}';
+    }
+    return Future.value('');
+  }*/
 
   // DISH --- DISH --- DISH --- DISH --- DISH --- DISH --- DISH --- DISH --- DISH --- DISH --- DISH --- DISH --- DISH --- DISH --- DISH --- DISH --- DISH --- DISH --- DISH --- DISH --- DISH --- DISH
   // Создание нового объекта блюда

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:bread_units_beta/MainPages/about_app_class.dart';
 import 'package:bread_units_beta/MainPages/dish_base_page.dart';
 import 'package:bread_units_beta/MainPages/help.dart';
-import 'package:bread_units_beta/MainPages/history_page.dart';
 import 'package:bread_units_beta/MainPages/main_page.dart';
 import 'package:bread_units_beta/MainPages/product_base_page.dart';
 import 'package:bread_units_beta/MainPages/settings_page.dart';
@@ -22,7 +21,6 @@ class MyApp extends StatelessWidget {
         '/': (context) => MainPageClass(),
         'product_base': (context) => ProductBaseClass(),
         'dish_base': (context) => DishBaseClass(),
-        'history': (context) => HistoryClass(),
         'settings': (context) => SettingsClass(),
         'help': (context) => HelpClass(),
         'about_app': (context) => AboutAppClass(),

@@ -10,10 +10,13 @@ class AboutAppClass extends StatefulWidget {
 class _AboutAppClassState extends State<AboutAppClass> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: _aboutAppAppBar(),
-      body: _aboutAppBody(),
-      drawer: _aboutAppDrawer(),
+    return PopScope(
+        canPop: false,
+        child: Scaffold(
+          appBar: _aboutAppAppBar(),
+          body: _aboutAppBody(),
+          drawer: _aboutAppDrawer(),
+        ),
     );
   }
 
@@ -37,7 +40,7 @@ class _AboutAppClassState extends State<AboutAppClass> {
   }
 
   String _aboutAppText() {
-    return 'Приложение разработано командой ГПО.\n\nАвторы идеи: Качаева С.А., Глотов Д.Д.\n\nРазработчики: Качаева С.А., Глотов Д.Д.';
+    return 'Приложение разработано командой ГПО.\n\nАвторы идеи: Качаева С.А., Глотов Д.Д.\n\nРазработчики: Качаева С.А., Глотов Д.Д., Дей Д.В.';
   }
 
   Drawer _aboutAppDrawer() {
@@ -79,13 +82,6 @@ class _AboutAppClassState extends State<AboutAppClass> {
             title: Text('База продуктов'),
             onTap: () {
               Navigator.popAndPushNamed(context, 'product_base');
-            },
-          ),
-          ListTile(
-            leading: Icon(Icons.menu_book_rounded, color: Colors.blueAccent[100]),
-            title: Text('История'),
-            onTap: () {
-              Navigator.popAndPushNamed(context, 'history');
             },
           ),
           ListTile(
