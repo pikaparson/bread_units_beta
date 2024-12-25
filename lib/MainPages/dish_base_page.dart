@@ -57,6 +57,8 @@ class _DishBaseClassState extends State<DishBaseClass> {
   List<Map<String, dynamic>> filteredItems = [];
 
   Widget _dishBaseBody() {
+    return SizedBox(width: 15, height: 15,);
+    /*
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(
@@ -116,6 +118,8 @@ class _DishBaseClassState extends State<DishBaseClass> {
         ],
       ),
     );
+
+     */
   }
 
  Widget _dishBaseFloatingActionButton() {
