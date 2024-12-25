@@ -880,9 +880,11 @@ class _MainPageClassState extends State<MainPageClass> {
     }
   }
 
+  double multiplier = 90;
+
   Widget _mainPageCardsBreakfast() {
     return SizedBox(
-      height: _journalsBreakfast.length * 82,
+      height: _journalsBreakfast.length * multiplier,
       child: ListView.builder(
           physics: const NeverScrollableScrollPhysics(),
           itemCount: _journalsBreakfast.length,
@@ -922,7 +924,7 @@ class _MainPageClassState extends State<MainPageClass> {
   }
   Widget _mainPageCardsLateBreakfast() {
     return SizedBox(
-      height: _journalsLateBreakfast.length * 82,
+      height: _journalsLateBreakfast.length * multiplier,
       child: ListView.builder(
           physics: const NeverScrollableScrollPhysics(),
           itemCount: _journalsLateBreakfast.length,
@@ -963,7 +965,7 @@ class _MainPageClassState extends State<MainPageClass> {
   }
   Widget _mainPageCardsLunch() {
     return SizedBox(
-      height: _journalsLunch.length * 82,
+      height: _journalsLunch.length * multiplier,
       child: ListView.builder(
           physics: const NeverScrollableScrollPhysics(),
           itemCount: _journalsLunch.length,
@@ -1004,7 +1006,7 @@ class _MainPageClassState extends State<MainPageClass> {
   }
   Widget _mainPageCardsLateLunch() {
     return SizedBox(
-      height: _journalsLateLunch.length * 82,
+      height: _journalsLateLunch.length * multiplier,
       child: ListView.builder(
           physics: const NeverScrollableScrollPhysics(),
           itemCount: _journalsLateLunch.length,
@@ -1045,7 +1047,7 @@ class _MainPageClassState extends State<MainPageClass> {
   }
   Widget _mainPageCardsDinner() {
     return SizedBox(
-      height: _journalsDinner.length * 82,
+      height: _journalsDinner.length * multiplier,
       child: ListView.builder(
           physics: const NeverScrollableScrollPhysics(),
           itemCount: _journalsDinner.length,
@@ -1086,7 +1088,7 @@ class _MainPageClassState extends State<MainPageClass> {
   }
   Widget _mainPageCardsLateDinner() {
     return SizedBox(
-      height: _journalsLateDinner.length * 82,
+      height: _journalsLateDinner.length * multiplier,
       child: ListView.builder(
           physics: const NeverScrollableScrollPhysics(),
           itemCount: _journalsLateDinner.length,
