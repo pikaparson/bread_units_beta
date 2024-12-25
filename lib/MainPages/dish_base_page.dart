@@ -184,8 +184,7 @@ class _DishBaseClassState extends State<DishBaseClass> {
   List<Map<String, dynamic>> filteredItems = [];
 
   Widget _dishBaseBody() {
-    return SizedBox(width: 15, height: 15,);
-    return ListView.builder(
+    /*return ListView.builder(
         itemCount: _journals.length,
         itemBuilder: (context, index) => Card (
           color: Colors.grey[100],
@@ -196,8 +195,7 @@ class _DishBaseClassState extends State<DishBaseClass> {
                 future: SQLhelper().calculateBu(int.parse(_journals[index]['id'].toString())),
                 builder: (context, snapshot) {
                   return Text('${snapshot.data?.toStringAsFixed(2)} ХЕ на 100 грамм');
-                }
-    /*
+                }*/
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(
@@ -257,8 +255,6 @@ class _DishBaseClassState extends State<DishBaseClass> {
         ],
       ),
     );
-
-     */
   }
 
  Widget _dishBaseFloatingActionButton() {

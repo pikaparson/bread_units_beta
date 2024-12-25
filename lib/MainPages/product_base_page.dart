@@ -187,7 +187,7 @@ class _ProductBaseClassState extends State<ProductBaseClass> {
 
   List<Map<String, dynamic>> filteredItems = [];
 
-    ListView _productBaseBody() {
+/*    ListView _productBaseBody() {
     return ListView.builder(
         itemCount: _journals.length,
         itemBuilder: (context, index) =>
@@ -210,8 +210,8 @@ class _ProductBaseClassState extends State<ProductBaseClass> {
                         returnEditIcon(_journals[index]['main'], index),
                         returnDeleteIcon(_journals[index]['main'], index),
                       ],
-                    )
-/*  Widget _productBaseBody() {
+                    )*/
+  Widget _productBaseBody() {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(
@@ -250,7 +250,6 @@ class _ProductBaseClassState extends State<ProductBaseClass> {
                           returnDeleteIcon(filteredItems[index]['main'], index),
                         ],
                       )),
-*/
                 ),
               ),
             ),
