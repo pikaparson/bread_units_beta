@@ -454,9 +454,42 @@ class SQLhelper {
     return db!.insert('products', data, conflictAlgorithm: ConflictAlgorithm.replace);
   }
   // Прочитать все элементы (журнал)
-  Future<List<Map<String, dynamic>>?> getProductItem() async {
+  // Future<List<Map<String, dynamic>>?> getProductItem() async {
+  //   final Database? db = await database;
+  //   return db!.query('products', orderBy: 'id');
+  // }
+  Future<List<Map<String, dynamic>>?> getProductItem([String sortKey = 'id', bool ascending = true, bool isCustom = true, bool isBuiltIn = true]) async {
     final Database? db = await database;
-    return db!.query('products', orderBy: 'id');
+    String orderByClause;
+    String whereCustomerOrBuiltIn;
+
+    switch (sortKey) {
+      case 'name':
+      // Сортировка по алфавиту
+        orderByClause = 'name ${ascending ? 'ASC' : 'DESC'}';
+        break;
+
+      case 'carbohydrates':
+      // Сортировка по углеводам
+        orderByClause = 'carbohydrates ${ascending ? 'ASC' : 'DESC'}';
+        break;
+
+      default:
+      // По умолчанию - по id
+        orderByClause = 'id';
+    }
+
+    if (isCustom == true && isBuiltIn == false) {
+      whereCustomerOrBuiltIn = 'WHERE main = 0';
+    }
+   else if (isCustom == false && isBuiltIn == true) {
+      whereCustomerOrBuiltIn = 'WHERE main = 1';
+    }
+   else {
+      whereCustomerOrBuiltIn = '';
+    }
+
+    return db!.query('products $whereCustomerOrBuiltIn', orderBy: orderByClause);
   }
   Future<List<Map<String, dynamic>>?> getProductItemOrderName() async {
     final Database? db = await database;
@@ -510,10 +543,96 @@ class SQLhelper {
     return db!.insert('dishes', data, conflictAlgorithm: ConflictAlgorithm.replace);
   }
   // Прочитать все элементы (журнал)
-  Future<List<Map<String, dynamic>>?> getDishItem() async {
+  // Future<List<Map<String, dynamic>>?> getDishItem() async {
+  //   final Database? db = await database;
+  //   return db!.query('dishes', orderBy: 'id');
+  // }
+
+  /*Future<List<Map<String, dynamic>>?> getDishItem([String sortKey = 'id', bool ascending = true, bool isCustom = true, bool isBuiltIn = true]) async {
     final Database? db = await database;
-    return db!.query('dishes', orderBy: 'id');
+    String orderByClause;
+    String whereCustomerOrBuiltIn;
+
+    switch (sortKey) {
+      case 'name':
+      // Сортировка по алфавиту
+        orderByClause = 'name ${ascending ? 'ASC' : 'DESC'}';
+        break;
+
+      case 'carbohydrates':
+      // Сортировка по углеводам
+        orderByClause = 'carbohydrates ${ascending ? 'ASC' : 'DESC'}';
+        break;
+
+      default:
+      // По умолчанию - по id
+        orderByClause = 'id';
+    }
+
+    if (isCustom == true && isBuiltIn == false) {
+      whereCustomerOrBuiltIn = 'WHERE main = 0';
+    }
+    else if (isCustom == false && isBuiltIn == true) {
+      whereCustomerOrBuiltIn = 'WHERE main = 1';
+    }
+    else {
+      whereCustomerOrBuiltIn = '';
+    }
+
+    return db!.query('dishes $whereCustomerOrBuiltIn', orderBy: orderByClause);
+  }*/
+
+
+  Future<List<Map<String, dynamic>>?> getDishItem([String sortKey = 'id', bool ascending = true, bool isCustom = true, bool isBuiltIn = true]) async {
+    final Database? db = await database;
+    String sortOrder = ascending ? 'ASC' : 'DESC';
+
+    // Формирование SQL-запроса
+    String query;
+
+    switch (sortKey) {
+      case 'name':
+      // Сортировка по алфавиту
+        query = '''
+        SELECT * 
+        FROM dishes 
+        ORDER BY name $sortOrder
+      ''';
+        break;
+
+      case 'carbohydrates':
+      // Сортировка по хлебным единицам
+        query = '''
+        SELECT 
+            d.*, 
+            SUM((p.carbohydrates * c.grams) / (100.0 * 12.0)) AS bu
+        FROM 
+            dishes d
+        JOIN 
+            compositions c ON d.id = c.dish
+        JOIN 
+            products p ON c.product = p.id
+        GROUP BY 
+            d.id
+        ORDER BY 
+            bu $sortOrder
+      ''';
+        break;
+
+      default:
+      // Сортировка по id
+        query = '''
+        SELECT * 
+        FROM dishes 
+        ORDER BY id $sortOrder
+      ''';
+    }
+
+    // Выполнение запроса
+    return await db!.rawQuery(query);
   }
+
+
   // Обновление объекта по id
   Future<int?> updateDishItem(int id, String n) async {
     final Database? db = await database;
